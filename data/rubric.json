@@ -12,10 +12,10 @@
       "4": "Elite"
     },
     "guidance": {
-      "1": "A miss. We would steer you away.",
-      "2": "Gets by. Forgettable.",
-      "3": "Solid. We would order it again.",
-      "4": "Best in class. Reference-grade."
+      "1": "A misfire. We'd cross the street to avoid it.",
+      "2": "It exists. You won't remember it by Tuesday.",
+      "3": "The good stuff. You'd happily order it again.",
+      "4": "Reference-grade. Text a friend immediately."
     }
   },
   "categories": {
@@ -27,36 +27,42 @@
           "key": "patty",
           "label": "The Patty",
           "blurb": "The meat itself — the part you cannot fake.",
+          "doctrine": "You cannot fake the meat.",
           "criteria": ["doneness", "seasoning", "crust", "texture", "ratio"]
         },
         {
           "key": "build",
           "label": "The Build",
           "blurb": "Architecture. Does it stand up to being eaten?",
+          "doctrine": "A burger that needs a knife has already lost.",
           "criteria": ["bun", "integrity", "distribution"]
         },
         {
           "key": "flavor",
           "label": "The Flavor",
           "blurb": "Everything that lands on the tongue.",
+          "doctrine": "Sauce is a privilege, not a right.",
           "criteria": ["flavor", "sauce", "cheese", "toppings"]
         },
         {
           "key": "craft",
           "label": "The Craft",
           "blurb": "Intent and execution beyond the basics.",
+          "doctrine": "Anyone can grill. Few can compose.",
           "criteria": ["craveability", "originality", "presentation", "concept"]
         },
         {
           "key": "value",
           "label": "The Honesty",
           "blurb": "What it costs and whether it kept its promises.",
+          "doctrine": "You're paying for the burger, not the postcode.",
           "criteria": ["value", "accuracy"]
         },
         {
           "key": "xfactor",
           "label": "The X-Factor",
           "blurb": "The intangibles a scorecard can barely hold.",
+          "doctrine": "The bite you're still thinking about in the cab home.",
           "criteria": ["postBurger", "xFactor"]
         }
       ],
@@ -100,5 +106,34 @@
       "Most recent rating wins, because momentum counts."
     ]
   },
+  "quorum": {
+    "min": 2,
+    "provisionalLabel": "Provisional",
+    "ratifiedLabel": "Ratified",
+    "blurb": "One palate is a rumour. A burger's score becomes an official Club Verdict once two or more members have filed a card. Until then it's Provisional — a solo scout report, taken on trust."
+  },
+  "consensus": {
+    "blurb": "We score independently, then reveal. The gap between the table's highest and lowest card tells you how much we actually agreed — no averaging away a good argument.",
+    "bands": [
+      { "maxSpread": 2,   "label": "Unanimous", "note": "The table spoke as one." },
+      { "maxSpread": 6,   "label": "Aligned",   "note": "Minor quibbles, broad agreement." },
+      { "maxSpread": 12,  "label": "Contested", "note": "A genuine difference of opinion." },
+      { "maxSpread": 999, "label": "Civil War", "note": "Someone is wrong, and loudly." }
+    ]
+  },
+  "awards": [
+    { "key": "goldenBun",     "label": "The Golden Bun",     "emoji": "🥇", "metric": "top",          "desc": "The highest score on the ledger.", "ratifiedPreferred": true },
+    { "key": "craveCup",      "label": "The Crave Cup",      "emoji": "🔥", "metric": "craveability", "desc": "The one you can't stop thinking about." },
+    { "key": "noriPrize",     "label": "The Nori Prize",     "emoji": "🍣", "metric": "originality",  "desc": "The most original idea on a bun." },
+    { "key": "woodenSpatula", "label": "The Wooden Spatula", "emoji": "🥄", "metric": "bottom",       "desc": "The cautionary tale. Lowest on record." }
+  ],
+  "constitution": [
+    { "clause": "The Independence Clause", "text": "Fill your own card before anyone speaks. No table-talk until the pens are down." },
+    { "clause": "The Sum Is Truth",        "text": "A total is the sum of its 20 parts. Hand-written totals are heresy." },
+    { "clause": "The Quorum Rule",         "text": "One palate is a rumour. Two or more makes it Ratified." },
+    { "clause": "The Postcode Penalty",    "text": "You are paying for the burger, not the neighbourhood." },
+    { "clause": "The Open Ledger",         "text": "Every score is public, forever. The ledger is the club." },
+    { "clause": "No Plate Too Big Or Small", "text": "Smash, pub, wagyu, or drunk-at-3am — all rise to be judged." }
+  ],
   "members": ["Tristan"]
 }

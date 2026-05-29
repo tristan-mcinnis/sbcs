@@ -74,12 +74,19 @@
       const againTot = b.ratings.filter((r) => r.again === true || r.again === false).length;
       const recYes = b.ratings.filter((r) => r.recommend === true).length;
       const recTot = b.ratings.filter((r) => r.recommend === true || r.recommend === false).length;
+      const quorumMin = (rubric.quorum && rubric.quorum.min) || 2;
+      const cards = b.ratings.map((r) => ({ rater: r.rater, total: sum(keys.map((k) => r.scores[k] || 0)) }));
+      cards.sort((a, c) => c.total - a.total);
       burgers.push({
         ...b,
         total: mean(totals),
         critMean, groupMean,
         raters: Array.from(new Set(b.ratings.map((r) => r.rater))),
         count: b.ratings.length,
+        ratified: b.ratings.length >= quorumMin,
+        spread: totals.length > 1 ? Math.max(...totals) - Math.min(...totals) : 0,
+        generous: cards.length > 1 ? cards[0] : null,
+        harsh: cards.length > 1 ? cards[cards.length - 1] : null,
         price: prices.length ? mean(prices) : null,
         weight: weights.length ? Math.round(mean(weights)) : null,
         type: mode(b.ratings.map((r) => r.type)) || "—",
@@ -111,6 +118,11 @@
     const cat = rubric.categories.burger;
     const MAX = cat.max;
     const keys = criteriaKeys(rubric);
+    const Q = rubric.quorum || { min: 2, provisionalLabel: "Provisional", ratifiedLabel: "Ratified" };
+    const consensusOf = (spread) => {
+      for (const band of (rubric.consensus && rubric.consensus.bands) || []) if (spread <= band.maxSpread) return band;
+      return null;
+    };
 
     // populate filters
     const typeSel = $("#lbType"), raterSel = $("#lbRater");
@@ -119,7 +131,7 @@
     Array.from(new Set(ratings.map((r) => r.rater).filter(Boolean))).sort()
       .forEach((r) => raterSel.add(new Option(r, r)));
 
-    const ui = { search: $("#lbSearch"), type: typeSel, rater: raterSel, sort: $("#lbSort") };
+    const ui = { search: $("#lbSearch"), type: typeSel, rater: raterSel, sort: $("#lbSort"), ratified: $("#lbRatified") };
     let openId = null;
 
     function compute() {
@@ -127,6 +139,7 @@
       if (ui.rater.value) rows = rows.filter((r) => r.rater === ui.rater.value);
       let burgers = aggregate(rows, rubric);
       if (ui.type.value) burgers = burgers.filter((b) => b.type === ui.type.value);
+      if (ui.ratified && ui.ratified.checked) burgers = burgers.filter((b) => b.ratified);
       const q = ui.search.value.trim().toLowerCase();
       if (q) burgers = burgers.filter((b) => (b.burger + " " + b.restaurant).toLowerCase().includes(q));
       switch (ui.sort.value) {
@@ -195,13 +208,24 @@
       ).join("");
       const yn = (o) => o.total ? `<span class="yn ${o.yes >= o.total - o.yes ? "yes" : "no"}">${o.yes}/${o.total}</span>` : '<span class="yn">—</span>';
 
+      const band = b.ratified ? consensusOf(b.spread) : null;
+      const status = b.ratified
+        ? `<span class="verdict"><span class="yn yes">✓ ${Q.ratifiedLabel}</span></span>` +
+          (band ? `<span class="verdict">Consensus <span class="yn">${band.label}</span> <span style="color:var(--ink-faint)">· spread ${b.spread}</span></span>` : "")
+        : `<span class="verdict"><span class="yn">${Q.provisionalLabel}</span> <span style="color:var(--ink-faint)">· one card so far, awaiting quorum</span></span>`;
+      const critics = b.count > 1
+        ? `<span class="verdict">Most generous: ${escapeHTML(b.generous.rater)} (${b.generous.total}) · Harshest: ${escapeHTML(b.harsh.rater)} (${b.harsh.total})</span>`
+        : "";
+
       return `<div class="lb-detail">
         <div class="detail-radar">${radarSVG(b)}<div class="legend">Club average per category · max 4.0</div></div>
         <div class="detail-bars">${groupBlocks}
           <div class="verdicts">
+            ${status}
             <span class="verdict">Order again ${yn(b.again)}</span>
             <span class="verdict">Club recommends ${yn(b.recommend)}</span>
-            <span class="verdict">Rated by ${b.raters.join(", ")}</span>
+            <span class="verdict">Rated by ${escapeHTML(b.raters.join(", "))}</span>
+            ${critics}
           </div>
         </div>
         ${noteCards ? `<div class="detail-notes">${noteCards}</div>` : ""}
@@ -220,6 +244,7 @@
           `<span class="tag">${b.type}</span>`,
           b.price ? `<span class="tag tag--gold">¥${Math.round(b.price)}</span>` : "",
           `<span class="tag tag--teal">${b.count} rating${b.count > 1 ? "s" : ""}</span>`,
+          b.ratified ? `<span class="tag tag--solid">✓ ${Q.ratifiedLabel}</span>` : `<span class="tag">${Q.provisionalLabel}</span>`,
         ].join("");
         const row = `<div class="lb-row" role="button" tabindex="0" data-id="${b.id}" aria-expanded="false">
           <div class="lb-rank${i === 0 ? " is-top" : ""}">${i + 1}</div>
@@ -250,9 +275,67 @@
       });
     }
 
-    Object.values(ui).forEach((el) => el.addEventListener(el.tagName === "INPUT" ? "input" : "change", () => { openId = null; render(); }));
+    Object.values(ui).filter(Boolean).forEach((el) => el.addEventListener(el.tagName === "INPUT" ? "input" : "change", () => { openId = null; render(); }));
     render();
     renderStats(ratings, rubric);
+    renderHall(ratings, rubric);
+  }
+
+  function renderHall(ratings, rubric) {
+    const host = $("#hallOfFame"); if (!host) return;
+    const cat = rubric.categories.burger;
+    const all = aggregate(ratings, rubric);
+    const awards = rubric.awards || [];
+    const pick = (a) => {
+      if (!all.length) return null;
+      let pool = all.slice();
+      if (a.metric === "top") {
+        if (a.ratifiedPreferred && pool.some((b) => b.ratified)) pool = pool.filter((b) => b.ratified);
+        pool.sort((x, y) => y.total - x.total);
+        return { b: pool[0], val: `${fmt(pool[0].total)} /${cat.max}`, prov: !pool[0].ratified };
+      }
+      if (a.metric === "bottom") {
+        pool.sort((x, y) => x.total - y.total);
+        return { b: pool[0], val: `${fmt(pool[0].total)} /${cat.max}`, prov: !pool[0].ratified };
+      }
+      pool.sort((x, y) => (y.critMean[a.metric] || 0) - (x.critMean[a.metric] || 0));
+      return { b: pool[0], val: `${fmt(pool[0].critMean[a.metric] || 0)} /4`, prov: !pool[0].ratified };
+    };
+    host.innerHTML = awards.map((a) => {
+      const w = pick(a);
+      const body = w
+        ? `<div class="honour-burger">${escapeHTML(w.b.burger)}</div>
+           <div class="honour-where">${escapeHTML(w.b.restaurant)}</div>
+           <div class="honour-val">${w.val}${w.prov ? ' <span class="prov">prov.</span>' : ""}</div>`
+        : `<div class="honour-burger" style="color:var(--ink-faint)">Awaiting cards</div>`;
+      return `<article class="honour" data-reveal>
+        <div class="honour-emoji" aria-hidden="true">${a.emoji || "🏅"}</div>
+        <div class="honour-name">${a.label}</div>
+        <div class="honour-desc">${a.desc}</div>${body}</article>`;
+    }).join("");
+    $$("[data-reveal]", host).forEach((el) => el.classList.add("in"));
+  }
+
+  // shared across index + methodology: render constitution / quorum / consensus copy
+  function renderRubricDocs(rubric) {
+    const cn = $("#constitutionList");
+    if (cn && rubric.constitution) {
+      cn.innerHTML = rubric.constitution.map((c) =>
+        `<div class="clause"><dt>${c.clause}</dt><dd>${c.text}</dd></div>`).join("");
+    }
+    const qb = $("#quorumBlurb"); if (qb && rubric.quorum) qb.textContent = rubric.quorum.blurb;
+    const cbl = $("#consensusBlurb"); if (cbl && rubric.consensus) cbl.textContent = rubric.consensus.blurb;
+    const cb = $("#consensusBands");
+    if (cb && rubric.consensus) {
+      let prev = -1;
+      cb.innerHTML = rubric.consensus.bands.map((b) => {
+        const lo = prev + 1;
+        const isLast = b.maxSpread >= 999;
+        const range = isLast ? `${lo}+` : lo === b.maxSpread ? `${lo}` : `${lo}–${b.maxSpread}`;
+        prev = b.maxSpread;
+        return `<div class="band-cell"><div class="bl">${b.label}</div><div class="bn">spread ${range}</div><div class="bnote">${b.note}</div></div>`;
+      }).join("");
+    }
   }
 
   function renderStats(ratings, rubric) {
@@ -299,7 +382,9 @@
       }).join("");
       return `<article class="rubric-card" data-reveal>
         <div class="rc-head"><h3>${g.label}</h3><span class="count">${g.criteria.length} criteria · ${g.criteria.length * sc.max} pts</span></div>
-        <p class="rc-blurb">${g.blurb}</p><dl>${dl}</dl></article>`;
+        <p class="rc-blurb">${g.blurb}</p>
+        ${g.doctrine ? `<p class="doctrine">“${g.doctrine}”</p>` : ""}
+        <dl>${dl}</dl></article>`;
     }).join("");
 
     $$("[data-reveal]", root).forEach((el) => el.classList.add("in"));
@@ -320,6 +405,7 @@
       const l = $("#lbList"); if (l) l.innerHTML = `<div class="empty-state"><div class="big">Couldn't load the rubric.</div><p>Serve the site over http (e.g. <code>python3 -m http.server</code>).</p></div>`;
       return;
     }
+    renderRubricDocs(rubric);
     if ($("#lbList")) await initLedger(rubric);
     if ($("#rubricRoot")) initMethodology(rubric);
   });

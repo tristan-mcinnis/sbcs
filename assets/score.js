@@ -181,6 +181,29 @@
       catch { showJSON(buildRecord()); msg("ok", "Select the JSON below and copy it."); }
     });
 
+    function shareText(rec) {
+      const total = keys.reduce((a, k) => a + (rec.scores[k] || 0), 0);
+      const got = Object.keys(rec.scores).length;
+      const head =
+        `🍔 SBCS card — ${rec.restaurant || "?"}: ${rec.burger || "?"}\n` +
+        `${total}/${MAX}  (${got}/${keys.length} scored) · by ${rec.rater || "?"}` +
+        `${rec.again != null ? ` · again: ${rec.again ? "yes" : "no"}` : ""}` +
+        `${rec.notes ? `\n“${rec.notes}”` : ""}`;
+      return head + "\n\n```json\n" + JSON.stringify(rec, null, 2) + "\n```";
+    }
+
+    $("#btnShare").addEventListener("click", async () => {
+      const rec = buildRecord();
+      const txt = shareText(rec);
+      try {
+        await navigator.clipboard.writeText(txt);
+        msg("ok", "Copied a tidy card for the group chat — paste it into WeChat. The scorekeeper drops it into a <strong>rating</strong> issue and the bot logs it.");
+      } catch {
+        showJSON(rec);
+        msg("ok", "Copy the card below and paste it into the group chat.");
+      }
+    });
+
     $("#btnDownload").addEventListener("click", () => {
       const rec = buildRecord();
       const blob = new Blob([JSON.stringify(rec, null, 2)], { type: "application/json" });

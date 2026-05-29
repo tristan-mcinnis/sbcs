@@ -383,7 +383,41 @@ textarea.ctl { resize: vertical; min-height: 80px; font-family: var(--sans); }
 .empty-state { text-align: center; padding: 3rem 1rem; color: var(--ink-soft); }
 .empty-state .big { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); margin-bottom: .4rem; }
 
+/* --------------------------------------------------- quorum / honours ---- */
+.check { display: inline-flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 700; letter-spacing: .04em; color: var(--ink-soft); cursor: pointer; padding: .5em .4em; border-radius: 999px; }
+.check input { width: 16px; height: 16px; accent-color: var(--crimson); cursor: pointer; }
+.check:hover { color: var(--ink); }
+
+.doctrine { font-family: var(--serif); font-style: italic; color: var(--crimson); font-size: 1rem; margin: -.3rem 0 1rem; padding-left: .8rem; border-left: 3px solid var(--gold); }
+
+.hall { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.honour { background: var(--card); border: 1.5px solid var(--line); border-radius: var(--radius); padding: 1.3rem 1.2rem; text-align: center; transition: transform .15s, box-shadow .15s, border-color .15s; }
+.honour:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--ink); }
+.honour-emoji { font-size: 1.9rem; line-height: 1; }
+.honour-name { font-family: var(--serif); font-weight: 800; font-size: 1.15rem; margin-top: .5rem; }
+.honour-desc { font-size: .78rem; color: var(--ink-faint); margin-top: .3rem; min-height: 2.4em; }
+.honour-burger { font-weight: 700; margin-top: .8rem; border-top: 1px solid var(--line); padding-top: .8rem; }
+.honour-where { font-size: .82rem; color: var(--ink-soft); }
+.honour-val { font-family: var(--mono); color: var(--crimson); margin-top: .3rem; }
+.honour-val .prov { font-family: var(--sans); font-size: .6rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-faint); border: 1px solid var(--line); border-radius: 4px; padding: 0 .3em; vertical-align: middle; }
+
+.clauses { display: grid; gap: 1rem; }
+.clauses--wide { grid-template-columns: repeat(3, 1fr); }
+.clause dt { font-family: var(--serif); font-weight: 800; font-size: 1.05rem; display: flex; align-items: baseline; gap: .45rem; }
+.clause dt::before { content: "§"; color: var(--crimson); font-family: var(--mono); font-size: .9em; }
+.clause dd { color: var(--ink-soft); font-size: .92rem; margin-top: .2rem; line-height: 1.5; }
+
+.bands { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-top: 1rem; }
+.band-cell { background: var(--card-2); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .7rem .85rem; }
+.band-cell .bl { font-family: var(--serif); font-weight: 800; }
+.band-cell .bn { font-family: var(--mono); font-size: .72rem; color: var(--crimson); }
+.band-cell .bnote { font-size: .8rem; color: var(--ink-soft); margin-top: .2rem; }
+
+.share-note { background: var(--card-2); border: 1.5px dashed var(--line); border-radius: var(--radius-sm); padding: .9rem 1.1rem; margin-top: 1.2rem; font-size: .88rem; color: var(--ink-soft); }
+.share-note b { color: var(--ink); }
+
 /* --------------------------------------------------------- responsive ---- */
+@media (max-width: 980px) { .hall { grid-template-columns: repeat(2, 1fr); } .clauses--wide { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; }
   .hero-figure { max-width: 420px; }
@@ -408,4 +442,7 @@ textarea.ctl { resize: vertical; min-height: 80px; font-family: var(--sans); }
   .lb-row { grid-template-columns: 40px 1fr; }
   .lb-score { grid-column: 2; align-items: flex-start; text-align: left; flex-direction: row; align-items: baseline; gap: .6rem; margin-top: .4rem; }
   .score-bar { display: none; }
+  .hall { grid-template-columns: 1fr 1fr; }
+  .clauses--wide { grid-template-columns: 1fr; }
+  .bands { grid-template-columns: 1fr; }
 }

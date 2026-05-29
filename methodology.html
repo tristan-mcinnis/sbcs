@@ -107,6 +107,39 @@
       <h3>Governance</h3>
       <p>The rubric lives in one file — <code>data/rubric.json</code> — and this page is generated from it, so the methodology can never quietly drift from what we actually score. Changing a criterion is a visible edit on the public record. Every rating arrives as its own entry in <code>data/ratings.json</code>; nothing is added in the dark.</p>
 
+    </div>
+  </section>
+
+  <!-- quorum & consensus -->
+  <section class="band band--paper2">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div><span class="eyebrow">Step Four</span><h2>Quorum &amp; Consensus</h2></div>
+        <p class="lead" style="max-width:34ch">We average independent cards — but we never average away a good argument.</p>
+      </div>
+      <div class="rubric-groups">
+        <article class="rubric-card" data-reveal>
+          <div class="rc-head"><h3>Quorum</h3><span class="count">2+ cards = Ratified</span></div>
+          <p class="rc-blurb" id="quorumBlurb"></p>
+          <p style="color:var(--ink-soft);font-size:.92rem">On the ledger, a single tasting is badged <strong>Provisional</strong>; two or more becomes <strong>Ratified</strong> — an official Club Verdict. Filter the leaderboard to "Ratified only" to see what the club has actually stood behind.</p>
+        </article>
+        <article class="rubric-card" data-reveal>
+          <div class="rc-head"><h3>Consensus</h3></div>
+          <p class="rc-blurb" id="consensusBlurb"></p>
+          <div class="bands" id="consensusBands"></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- constitution -->
+  <section class="band">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div><span class="eyebrow">The Fine Print</span><h2>The Burger Constitution</h2></div>
+        <p class="lead" style="max-width:34ch">The whole rulebook, fits on a napkin.</p>
+      </div>
+      <dl class="clauses clauses--wide" id="constitutionList" data-reveal></dl>
       <div class="chopstick-rule" style="margin-top:2.5rem"><span class="x">S·B✕C·S</span></div>
       <div style="text-align:center;margin-top:2rem">
         <a href="score.html" class="btn btn--crimson">Score a Burger</a>

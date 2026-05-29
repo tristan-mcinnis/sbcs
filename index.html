@@ -101,6 +101,7 @@
             <option value="value">Best value</option>
             <option value="ratings">Most rated</option>
           </select></span>
+        <label class="check" for="lbRatified"><input type="checkbox" id="lbRatified" /> Ratified only</label>
       </div>
 
       <div class="leaderboard" id="lbList" data-reveal>
@@ -109,8 +110,19 @@
     </div>
   </section>
 
+  <!-- ===================================================== hall of fame -->
+  <section class="band band--paper2" id="honours">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div><span class="eyebrow">Club Honours</span><h2>The Hall of Fame</h2></div>
+        <p class="lead" style="max-width:34ch">Awarded automatically by the ledger — they'll shuffle as the cards roll in.</p>
+      </div>
+      <div class="hall" id="hallOfFame" data-reveal></div>
+    </div>
+  </section>
+
   <!-- ===================================================== charter -->
-  <section class="band band--paper2" id="charter">
+  <section class="band" id="charter">
     <div class="wrap">
       <div class="section-head" data-reveal>
         <div><span class="eyebrow">The Fine Print</span><h2>Club Charter</h2></div>
@@ -122,14 +134,9 @@
           <p style="color:var(--ink-soft)">SBCS is a small, serious-but-not-that-serious supper club in Shanghai. We meet, we order the burger, and we fill in the card. The point isn't to be right — it's to be <em>consistent</em>, so that "an 8" means the same thing in Jing'an as it does in Xuhui.</p>
         </article>
         <article class="rubric-card" data-reveal>
-          <div class="rc-head"><h3>The Rules</h3></div>
-          <p class="rc-blurb">Short enough to remember mid-bite.</p>
-          <div class="method-prose"><ul class="dash">
-            <li>One card per person per burger. Score before you discuss.</li>
-            <li>Totals are recomputed from the 20 sub-scores. The sum is the truth.</li>
-            <li>Every score is public. The ledger is the club.</li>
-            <li>No plate too big or small. Smash, pub, wagyu — all welcome.</li>
-          </ul></div>
+          <div class="rc-head"><h3>The Constitution</h3></div>
+          <p class="rc-blurb">Six clauses. Short enough to remember mid-bite.</p>
+          <dl class="clauses" id="constitutionList"></dl>
         </article>
       </div>
       <div class="chopstick-rule" style="margin-top:2rem"><span class="x">S·B✕C·S</span></div>
