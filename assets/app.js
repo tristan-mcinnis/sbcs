@@ -29,15 +29,7 @@
       });
       $$("#navLinks a").forEach((a) => a.addEventListener("click", () => links.classList.remove("open")));
     }
-    const io = "IntersectionObserver" in window
-      ? new IntersectionObserver((entries) => {
-          entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
-        }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" })
-      : null;
-    $$("[data-reveal]").forEach((el, i) => {
-      el.style.transitionDelay = (Math.min(i, 6) * 60) + "ms";
-      if (io) io.observe(el); else el.classList.add("in");
-    });
+    $$("[data-reveal]").forEach((el, i) => { el.style.animationDelay = (Math.min(i, 8) * 70) + "ms"; });
   }
 
   async function loadJSON(path) {

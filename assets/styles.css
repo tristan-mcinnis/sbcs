@@ -47,6 +47,7 @@ body {
   overflow-x: hidden;
 }
 img, svg { display: block; max-width: 100%; }
+img { height: auto; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; cursor: pointer; background: none; border: none; }
 input, select, textarea { font: inherit; color: inherit; }
@@ -373,12 +374,13 @@ textarea.ctl { resize: vertical; min-height: 80px; font-family: var(--sans); }
 .footer-bottom { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 2.4rem; padding-top: 1.4rem; border-top: 1px solid rgba(255,255,255,.12); color: #968b76; font-size: .8rem; letter-spacing: .04em; }
 
 /* --------------------------------------------------------------- reveal --- */
-[data-reveal] { opacity: 0; transform: translateY(18px); transition: opacity .6s cubic-bezier(.2,.7,.3,1), transform .6s cubic-bezier(.2,.7,.3,1); }
-[data-reveal].in { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) {
-  [data-reveal] { opacity: 1; transform: none; transition: none; }
-  html { scroll-behavior: auto; }
+/* Content is visible by default; the animation only enhances. Nothing can get
+   stuck invisible (no JS/observer dependency, survives backgrounded tabs). */
+@keyframes sbcs-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] { animation: sbcs-rise .6s cubic-bezier(.2,.7,.3,1) both; }
 }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 .empty-state { text-align: center; padding: 3rem 1rem; color: var(--ink-soft); }
 .empty-state .big { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); margin-bottom: .4rem; }
