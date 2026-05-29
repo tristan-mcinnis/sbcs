@@ -1,0 +1,37 @@
+[
+  {
+    "date": "2026-05-28",
+    "rater": "Tristan",
+    "restaurant": "Shake Shack",
+    "burger": "ShackBurger, double",
+    "category": "burger",
+    "price": 68,
+    "type": "Smash",
+    "pattyWeight": 160,
+    "scores": {
+      "doneness": 4,
+      "seasoning": 3,
+      "crust": 4,
+      "texture": 3,
+      "ratio": 4,
+      "bun": 4,
+      "integrity": 3,
+      "distribution": 3,
+      "value": 3,
+      "accuracy": 4,
+      "flavor": 3,
+      "sauce": 4,
+      "cheese": 3,
+      "toppings": 3,
+      "craveability": 3,
+      "originality": 3,
+      "presentation": 4,
+      "postBurger": 3,
+      "concept": 3,
+      "xFactor": 4
+    },
+    "again": true,
+    "recommend": true,
+    "notes": ""
+  }
+]

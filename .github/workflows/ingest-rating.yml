@@ -1,0 +1,60 @@
+name: Ingest rating
+
+# When someone files (or edits) a "rating" issue, parse it and append the
+# scorecard to data/ratings.json. Every rating becomes an auditable commit.
+on:
+  issues:
+    types: [opened, edited, labeled, reopened]
+
+permissions:
+  contents: write
+  issues: write
+
+# Don't let two rating issues race on data/ratings.json.
+concurrency:
+  group: ledger-ingest
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    # Act on issues labelled "rating" OR whose title starts with "Rating:".
+    if: >-
+      contains(join(github.event.issue.labels.*.name, ','), 'rating') ||
+      startsWith(github.event.issue.title, 'Rating:')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Parse issue into the ledger
+        id: ingest
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+        run: node scripts/ingest.mjs
+
+      - name: Commit the new rating
+        if: steps.ingest.outputs.changed == 'true'
+        run: |
+          git config user.name "sbcs-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ratings.json
+          git commit -m "ledger: ${{ steps.ingest.outputs.commitmsg }} (#${{ github.event.issue.number }})"
+          git push
+
+      - name: Reply on the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue comment "${{ github.event.issue.number }}" --body-file comment.md
+
+      - name: Resolve the issue
+        if: steps.ingest.outputs.status == 'ok'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue edit "${{ github.event.issue.number }}" --add-label logged || true
+          gh issue close "${{ github.event.issue.number }}" --reason completed || true

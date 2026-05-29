@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "updated": "2026-05-29",
+  "note": "This file is the single source of truth for the SBCS scoring instrument. The methodology page, the leaderboard and the scoring form all read it. Edit it here and everything downstream updates.",
+  "scale": {
+    "min": 1,
+    "max": 4,
+    "labels": {
+      "1": "Poor",
+      "2": "Fair",
+      "3": "Strong",
+      "4": "Elite"
+    },
+    "guidance": {
+      "1": "A miss. We would steer you away.",
+      "2": "Gets by. Forgettable.",
+      "3": "Solid. We would order it again.",
+      "4": "Best in class. Reference-grade."
+    }
+  },
+  "categories": {
+    "burger": {
+      "label": "Burger",
+      "max": 80,
+      "groups": [
+        {
+          "key": "patty",
+          "label": "The Patty",
+          "blurb": "The meat itself — the part you cannot fake.",
+          "criteria": ["doneness", "seasoning", "crust", "texture", "ratio"]
+        },
+        {
+          "key": "build",
+          "label": "The Build",
+          "blurb": "Architecture. Does it stand up to being eaten?",
+          "criteria": ["bun", "integrity", "distribution"]
+        },
+        {
+          "key": "flavor",
+          "label": "The Flavor",
+          "blurb": "Everything that lands on the tongue.",
+          "criteria": ["flavor", "sauce", "cheese", "toppings"]
+        },
+        {
+          "key": "craft",
+          "label": "The Craft",
+          "blurb": "Intent and execution beyond the basics.",
+          "criteria": ["craveability", "originality", "presentation", "concept"]
+        },
+        {
+          "key": "value",
+          "label": "The Honesty",
+          "blurb": "What it costs and whether it kept its promises.",
+          "criteria": ["value", "accuracy"]
+        },
+        {
+          "key": "xfactor",
+          "label": "The X-Factor",
+          "blurb": "The intangibles a scorecard can barely hold.",
+          "criteria": ["postBurger", "xFactor"]
+        }
+      ],
+      "criteria": {
+        "doneness":     { "n": 1,  "label": "Doneness",      "desc": "Cooked to the temperature it promised. A medium that is actually medium." },
+        "seasoning":    { "n": 2,  "label": "Seasoning",     "desc": "Salt and pepper where it counts. Seasoned by the kitchen, not by you at the table." },
+        "crust":        { "n": 3,  "label": "Crust",         "desc": "The Maillard sear — browning, char and crisp edges on the patty." },
+        "texture":      { "n": 4,  "label": "Texture",       "desc": "Bite and chew. Juicy and tender, not a hockey puck and not mush." },
+        "ratio":        { "n": 5,  "label": "Ratio",         "desc": "Meat-to-bun-to-everything balance. Nothing overpowers, nothing is missing." },
+        "bun":          { "n": 6,  "label": "Bun",           "desc": "Structure, flavour, freshness. Toasted, soft, and still standing at the last bite." },
+        "integrity":    { "n": 7,  "label": "Integrity",     "desc": "Does it hold together, or collapse into a knife-and-fork situation by bite three?" },
+        "distribution": { "n": 8,  "label": "Distribution",  "desc": "Toppings and sauce spread evenly, not all hiding in one corner." },
+        "flavor":       { "n": 11, "label": "Flavor",        "desc": "The overall taste. Does it all add up to something genuinely delicious?" },
+        "sauce":        { "n": 12, "label": "Sauce",         "desc": "The condiment game. Right sauce, right amount, right idea." },
+        "cheese":       { "n": 13, "label": "Cheese",        "desc": "Melt, coverage, choice. Present and accounted for (if it claims to be there)." },
+        "toppings":     { "n": 14, "label": "Toppings",      "desc": "Freshness and contribution. Earning a place, not just filling space." },
+        "craveability": { "n": 15, "label": "Craveability",  "desc": "Will you think about this burger tomorrow? Next week?" },
+        "originality":  { "n": 16, "label": "Originality",   "desc": "Does it bring something new, or is it a competent cover of a familiar tune?" },
+        "presentation": { "n": 17, "label": "Presentation",  "desc": "How it looks on arrival. We eat with our eyes first." },
+        "concept":      { "n": 19, "label": "Concept",       "desc": "The idea behind it. Is there a point of view on the plate?" },
+        "value":        { "n": 9,  "label": "Value",         "desc": "Quality and quantity for the yuan. Worth it, or are you paying for the postcode?" },
+        "accuracy":     { "n": 10, "label": "Accuracy",      "desc": "Did it match the menu's promise? No mystery downgrades." },
+        "postBurger":   { "n": 18, "label": "Post-Burger",   "desc": "How you feel afterwards. Satisfied and happy, or full of grease and regret?" },
+        "xFactor":      { "n": 20, "label": "X-Factor",      "desc": "The intangible. That special something a scorecard can never fully capture." }
+      }
+    }
+  },
+  "types": ["Smash", "Pub", "Diner", "Gourmet", "Fast Food", "Chain", "Wagyu", "Plant-Based", "Other"],
+  "verdicts": {
+    "again": { "label": "Order Again?", "desc": "Would the rater personally order this exact burger again?" },
+    "recommend": { "label": "Club Recommends?", "desc": "Would the rater send a friend here for this burger?" }
+  },
+  "ranking": {
+    "metric": "Mean total across all club ratings of a burger, out of 80.",
+    "totalsAreComputed": "A burger's total is always recomputed from its 20 sub-scores. Hand-written totals on old cards are ignored — the sum is the truth.",
+    "minRatings": 1,
+    "tiebreak": [
+      "Higher mean on The Patty (the part you cannot fake).",
+      "Higher mean on Craveability.",
+      "More club ratings on record.",
+      "Most recent rating wins, because momentum counts."
+    ]
+  },
+  "members": ["Tristan"]
+}
