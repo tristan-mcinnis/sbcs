@@ -12,6 +12,12 @@ labels: ["rating"]
 
   Scores are integers 1–4. See the methodology page for what each criterion means.
   Leave price / pattyWeight as null if unknown. Set again / recommend to true or false.
+
+  Scoring SUSHI instead? Easiest is the website (pick "Sushi" at the top of the card).
+  Or set "category": "sushi" and replace the scores block with the sushi keys:
+  riceTemp, riceSeason, riceTexture, riceDensity, riceForm, fishFresh, fishQuality,
+  knifework, fishTemp, ratio, wasabi, nikiri, presentation, originality, consistency,
+  value, accuracy, hospitality, craveability, xFactor.
 -->
 
 ```json

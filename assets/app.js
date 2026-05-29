@@ -17,6 +17,7 @@
     return best;
   };
   const fmt = (n, d = 1) => Number(n).toFixed(d);
+  const CAT_EMOJI = { burger: "🍔", sushi: "🍣" };
 
   /* ----------------------------------------------------- chrome (all pages) */
   function initChrome() {
@@ -39,19 +40,20 @@
   }
 
   /* ----------------------------------------------------------- aggregation */
-  function criteriaKeys(rubric) { return Object.keys(rubric.categories.burger.criteria); }
-
+  // Each rated item belongs to a category (burger, sushi, …). Items are grouped
+  // by category + restaurant + name, and scored against that category's rubric.
   function aggregate(ratings, rubric) {
-    const cat = rubric.categories.burger;
-    const keys = criteriaKeys(rubric);
-    const byBurger = new Map();
+    const byId = new Map();
     for (const r of ratings) {
-      const id = slug(r.restaurant) + "--" + slug(r.burger);
-      if (!byBurger.has(id)) byBurger.set(id, { id, restaurant: r.restaurant, burger: r.burger, ratings: [] });
-      byBurger.get(id).ratings.push(r);
+      const category = rubric.categories[r.category] ? r.category : "burger";
+      const id = category + "::" + slug(r.restaurant) + "--" + slug(r.burger);
+      if (!byId.has(id)) byId.set(id, { id, category, restaurant: r.restaurant, burger: r.burger, ratings: [] });
+      byId.get(id).ratings.push(r);
     }
-    const burgers = [];
-    for (const b of byBurger.values()) {
+    const out = [];
+    for (const b of byId.values()) {
+      const cat = rubric.categories[b.category];
+      const keys = Object.keys(cat.criteria);
       const totals = b.ratings.map((r) => sum(keys.map((k) => r.scores[k] || 0)));
       const critMean = {};
       for (const k of keys) {
@@ -69,8 +71,10 @@
       const quorumMin = (rubric.quorum && rubric.quorum.min) || 2;
       const cards = b.ratings.map((r) => ({ rater: r.rater, total: sum(keys.map((k) => r.scores[k] || 0)) }));
       cards.sort((a, c) => c.total - a.total);
-      burgers.push({
+      out.push({
         ...b,
+        categoryLabel: cat.label,
+        max: cat.max,
         total: mean(totals),
         critMean, groupMean,
         raters: Array.from(new Set(b.ratings.map((r) => r.rater))),
@@ -87,13 +91,13 @@
         recommend: { yes: recYes, total: recTot },
       });
     }
-    return burgers;
+    return out;
   }
 
   const cmpScore = (a, b) =>
     b.total - a.total ||
-    b.groupMean.patty - a.groupMean.patty ||
-    b.critMean.craveability - a.critMean.craveability ||
+    (b.groupMean.patty || b.groupMean.rice || 0) - (a.groupMean.patty || a.groupMean.rice || 0) ||
+    (b.critMean.craveability || 0) - (a.critMean.craveability || 0) ||
     b.count - a.count ||
     (b.recent > a.recent ? 1 : -1);
 
@@ -107,9 +111,6 @@
         <p>Run a local server (e.g. <code>python3 -m http.server</code>) or view the live site. <br/><small>${err.message}</small></p></div>`;
       return;
     }
-    const cat = rubric.categories.burger;
-    const MAX = cat.max;
-    const keys = criteriaKeys(rubric);
     const Q = rubric.quorum || { min: 2, provisionalLabel: "Provisional", ratifiedLabel: "Ratified" };
     const consensusOf = (spread) => {
       for (const band of (rubric.consensus && rubric.consensus.bands) || []) if (spread <= band.maxSpread) return band;
@@ -117,19 +118,22 @@
     };
 
     // populate filters
-    const typeSel = $("#lbType"), raterSel = $("#lbRater");
+    const typeSel = $("#lbType"), raterSel = $("#lbRater"), catSel = $("#lbCat");
+    if (catSel) Object.keys(rubric.categories).forEach((k) =>
+      catSel.add(new Option(`${CAT_EMOJI[k] || ""} ${rubric.categories[k].label}`.trim(), k)));
     Array.from(new Set(ratings.map((r) => r.type).filter(Boolean))).sort()
       .forEach((t) => typeSel.add(new Option(t, t)));
     Array.from(new Set(ratings.map((r) => r.rater).filter(Boolean))).sort()
       .forEach((r) => raterSel.add(new Option(r, r)));
 
-    const ui = { search: $("#lbSearch"), type: typeSel, rater: raterSel, sort: $("#lbSort"), ratified: $("#lbRatified") };
+    const ui = { search: $("#lbSearch"), cat: catSel, type: typeSel, rater: raterSel, sort: $("#lbSort"), ratified: $("#lbRatified") };
     let openId = null;
 
     function compute() {
       let rows = ratings.slice();
       if (ui.rater.value) rows = rows.filter((r) => r.rater === ui.rater.value);
       let burgers = aggregate(rows, rubric);
+      if (ui.cat && ui.cat.value) burgers = burgers.filter((b) => b.category === ui.cat.value);
       if (ui.type.value) burgers = burgers.filter((b) => b.type === ui.type.value);
       if (ui.ratified && ui.ratified.checked) burgers = burgers.filter((b) => b.ratified);
       const q = ui.search.value.trim().toLowerCase();
@@ -155,7 +159,7 @@
     }
 
     function radarSVG(b) {
-      const groups = cat.groups;
+      const groups = rubric.categories[b.category].groups;
       const n = groups.length, cx = 120, cy = 116, R = 82;
       const ang = (i) => (-90 + (i * 360) / n) * Math.PI / 180;
       const pt = (i, r) => [cx + r * Math.cos(ang(i)), cy + r * Math.sin(ang(i))];
@@ -184,6 +188,7 @@
     }
 
     function detailHTML(b) {
+      const cat = rubric.categories[b.category];
       const groupBlocks = cat.groups.map((g) => {
         const crits = g.criteria.map((k) => {
           const c = cat.criteria[k];
@@ -227,13 +232,14 @@
     function render() {
       const burgers = compute();
       if (!burgers.length) {
-        listEl.innerHTML = `<div class="empty-state"><div class="big">No burgers match.</div><p>Try clearing the filters.</p></div>`;
+        listEl.innerHTML = `<div class="empty-state"><div class="big">No plates match.</div><p>Try clearing the filters.</p></div>`;
         return;
       }
       listEl.innerHTML = burgers.map((b, i) => {
-        const pct = clamp((b.total / MAX) * 100, 0, 100);
+        const pct = clamp((b.total / b.max) * 100, 0, 100);
         const metaTags = [
-          `<span class="tag">${b.type}</span>`,
+          `<span class="tag">${CAT_EMOJI[b.category] || ""} ${escapeHTML(b.categoryLabel)}</span>`,
+          `<span class="tag">${escapeHTML(b.type)}</span>`,
           b.price ? `<span class="tag tag--gold">¥${Math.round(b.price)}</span>` : "",
           `<span class="tag tag--teal">${b.count} rating${b.count > 1 ? "s" : ""}</span>`,
           b.ratified ? `<span class="tag tag--solid">✓ ${Q.ratifiedLabel}</span>` : `<span class="tag">${Q.provisionalLabel}</span>`,
@@ -242,11 +248,11 @@
           <div class="lb-rank${i === 0 ? " is-top" : ""}">${i + 1}</div>
           <div class="lb-main">
             <div class="name">${escapeHTML(b.burger)}</div>
-            <div class="sub">${escapeHTML(b.restaurant)}${b.weight ? " · " + b.weight + "g patty" : ""}</div>
+            <div class="sub">${escapeHTML(b.restaurant)}${b.category === "burger" && b.weight ? " · " + b.weight + "g patty" : ""}</div>
             <div class="meta">${metaTags}</div>
           </div>
           <div class="lb-score">
-            <div class="val"><b>${fmt(b.total)}</b><span style="color:var(--ink-faint);font-size:1rem"> /${MAX}</span></div>
+            <div class="val"><b>${fmt(b.total)}</b><span style="color:var(--ink-faint);font-size:1rem"> /${b.max}</span></div>
             <div class="score-bar"><i style="width:${pct}%"></i></div>
             <div class="of">${Math.round(pct)}%</div>
           </div>
@@ -275,7 +281,6 @@
 
   function renderHall(ratings, rubric) {
     const host = $("#hallOfFame"); if (!host) return;
-    const cat = rubric.categories.burger;
     const all = aggregate(ratings, rubric);
     const awards = rubric.awards || [];
     const pick = (a) => {
@@ -284,19 +289,21 @@
       if (a.metric === "top") {
         if (a.ratifiedPreferred && pool.some((b) => b.ratified)) pool = pool.filter((b) => b.ratified);
         pool.sort((x, y) => y.total - x.total);
-        return { b: pool[0], val: `${fmt(pool[0].total)} /${cat.max}`, prov: !pool[0].ratified };
+        return { b: pool[0], val: `${fmt(pool[0].total)} /${pool[0].max}`, prov: !pool[0].ratified };
       }
       if (a.metric === "bottom") {
         pool.sort((x, y) => x.total - y.total);
-        return { b: pool[0], val: `${fmt(pool[0].total)} /${cat.max}`, prov: !pool[0].ratified };
+        return { b: pool[0], val: `${fmt(pool[0].total)} /${pool[0].max}`, prov: !pool[0].ratified };
       }
+      pool = pool.filter((b) => a.metric in b.critMean);
+      if (!pool.length) return null;
       pool.sort((x, y) => (y.critMean[a.metric] || 0) - (x.critMean[a.metric] || 0));
       return { b: pool[0], val: `${fmt(pool[0].critMean[a.metric] || 0)} /4`, prov: !pool[0].ratified };
     };
     host.innerHTML = awards.map((a) => {
       const w = pick(a);
       const body = w
-        ? `<div class="honour-burger">${escapeHTML(w.b.burger)}</div>
+        ? `<div class="honour-burger">${CAT_EMOJI[w.b.category] || ""} ${escapeHTML(w.b.burger)}</div>
            <div class="honour-where">${escapeHTML(w.b.restaurant)}</div>
            <div class="honour-val">${w.val}${w.prov ? ' <span class="prov">prov.</span>' : ""}</div>`
         : `<div class="honour-burger" style="color:var(--ink-faint)">Awaiting cards</div>`;
@@ -305,7 +312,6 @@
         <div class="honour-name">${a.label}</div>
         <div class="honour-desc">${a.desc}</div>${body}</article>`;
     }).join("");
-    $$("[data-reveal]", host).forEach((el) => el.classList.add("in"));
   }
 
   // shared across index + methodology: render constitution / quorum / consensus copy
@@ -314,6 +320,10 @@
     if (cn && rubric.constitution) {
       cn.innerHTML = rubric.constitution.map((c) =>
         `<div class="clause"><dt>${c.clause}</dt><dd>${c.text}</dd></div>`).join("");
+    }
+    const roster = $("#roster");
+    if (roster && Array.isArray(rubric.members)) {
+      roster.innerHTML = rubric.members.map((m) => `<span class="tag tag--crimson">${escapeHTML(m)}</span>`).join("");
     }
     const qb = $("#quorumBlurb"); if (qb && rubric.quorum) qb.textContent = rubric.quorum.blurb;
     const cbl = $("#consensusBlurb"); if (cbl && rubric.consensus) cbl.textContent = rubric.consensus.blurb;
@@ -337,7 +347,7 @@
     const restaurants = new Set(ratings.map((r) => r.restaurant)).size;
     const cards = [
       { num: ratings.length, lbl: "Scores Logged", sub: "and counting" },
-      { num: burgers.length, lbl: "Burgers Judged", sub: "across the city" },
+      { num: burgers.length, lbl: "Plates Judged", sub: "burgers & sushi" },
       { num: restaurants, lbl: "Kitchens Visited", sub: "no plate too small" },
       { num: top ? fmt(top.total) : "—", lbl: "Top Score", sub: top ? top.burger : "—", raw: true },
     ];
@@ -357,7 +367,7 @@
   /* ---------------------------------------------------------- methodology */
   function initMethodology(rubric) {
     const root = $("#rubricRoot"); if (!root) return;
-    const cat = rubric.categories.burger, sc = rubric.scale;
+    const sc = rubric.scale;
 
     const legend = $("#scaleLegend");
     if (legend) {
@@ -367,21 +377,34 @@
       ).join("");
     }
 
-    root.innerHTML = cat.groups.map((g) => {
-      const dl = g.criteria.map((k) => {
-        const c = cat.criteria[k];
-        return `<div><dt><span class="crit-n">${String(c.n).padStart(2, "0")}</span>${c.label}</dt><dd>${c.desc}</dd></div>`;
-      }).join("");
-      return `<article class="rubric-card" data-reveal>
-        <div class="rc-head"><h3>${g.label}</h3><span class="count">${g.criteria.length} criteria · ${g.criteria.length * sc.max} pts</span></div>
-        <p class="rc-blurb">${g.blurb}</p>
-        ${g.doctrine ? `<p class="doctrine">“${g.doctrine}”</p>` : ""}
-        <dl>${dl}</dl></article>`;
-    }).join("");
+    const catKeys = Object.keys(rubric.categories);
+    const tabsHost = $("#rubricTabs");
 
-    $$("[data-reveal]", root).forEach((el) => el.classList.add("in"));
-    const tot = $("#critTotal"); if (tot) tot.textContent = Object.keys(cat.criteria).length;
-    const max = $("#maxTotal"); if (max) max.textContent = cat.max;
+    function renderCat(key) {
+      const cat = rubric.categories[key];
+      root.innerHTML = cat.groups.map((g) => {
+        const dl = g.criteria.map((k) => {
+          const c = cat.criteria[k];
+          return `<div><dt><span class="crit-n">${String(c.n).padStart(2, "0")}</span>${c.label}</dt><dd>${c.desc}</dd></div>`;
+        }).join("");
+        return `<article class="rubric-card" data-reveal>
+          <div class="rc-head"><h3>${g.label}</h3><span class="count">${g.criteria.length} criteria · ${g.criteria.length * sc.max} pts</span></div>
+          <p class="rc-blurb">${g.blurb}</p>
+          ${g.doctrine ? `<p class="doctrine">“${g.doctrine}”</p>` : ""}
+          <dl>${dl}</dl></article>`;
+      }).join("");
+      const tot = $("#critTotal"); if (tot) tot.textContent = Object.keys(cat.criteria).length;
+      const max = $("#maxTotal"); if (max) max.textContent = cat.max;
+      if (tabsHost) $$(".rtab", tabsHost).forEach((btn) => btn.classList.toggle("active", btn.dataset.cat === key));
+    }
+
+    if (tabsHost) {
+      tabsHost.innerHTML = catKeys.map((k, i) =>
+        `<button type="button" class="rtab${i === 0 ? " active" : ""}" data-cat="${k}">${CAT_EMOJI[k] || ""} ${rubric.categories[k].label}</button>`
+      ).join("");
+      $$(".rtab", tabsHost).forEach((btn) => btn.addEventListener("click", () => renderCat(btn.dataset.cat)));
+    }
+    renderCat(catKeys[0]);
   }
 
   function escapeHTML(s) {

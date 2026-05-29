@@ -37,6 +37,7 @@
         <a href="index.html" class="active">The Ledger</a>
         <a href="methodology.html">Methodology</a>
         <a href="index.html#charter">Charter</a>
+        <a href="https://www.instagram.com/sushi.burger.club/" target="_blank" rel="noopener">Instagram ↗</a>
         <a href="score.html" class="cta">Score a Burger</a>
       </div>
     </nav>
@@ -89,7 +90,9 @@
       </div>
 
       <div class="lb-controls" data-reveal>
-        <input class="input lb-search" id="lbSearch" type="search" placeholder="Search a burger or restaurant…" aria-label="Search" />
+        <input class="input lb-search" id="lbSearch" type="search" placeholder="Search a burger, roll or restaurant…" aria-label="Search" />
+        <span class="field-inline"><label for="lbCat">Plate</label>
+          <select class="select" id="lbCat"><option value="">All</option></select></span>
         <span class="field-inline"><label for="lbType">Type</label>
           <select class="select" id="lbType"><option value="">All</option></select></span>
         <span class="field-inline"><label for="lbRater">Rater</label>
@@ -139,7 +142,11 @@
           <dl class="clauses" id="constitutionList"></dl>
         </article>
       </div>
-      <div class="chopstick-rule" style="margin-top:2rem"><span class="x">S·B✕C·S</span></div>
+      <div class="roster-wrap" data-reveal>
+        <span class="eyebrow muted" style="display:block;margin-bottom:.9rem">The Tasters · A Pro-Carb Collective of Seven</span>
+        <div class="roster" id="roster"></div>
+      </div>
+      <div class="chopstick-rule" style="margin-top:2.4rem"><span class="x">S·B✕C·S</span></div>
     </div>
   </section>
 

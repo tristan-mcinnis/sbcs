@@ -19,7 +19,7 @@
       t.addEventListener("click", () => { const o = l.classList.toggle("open"); t.setAttribute("aria-expanded", String(o)); });
       $$("#navLinks a").forEach((a) => a.addEventListener("click", () => l.classList.remove("open")));
     }
-    $$("[data-reveal]").forEach((el) => el.classList.add("in"));
+    $$("[data-reveal]").forEach((el, i) => { el.style.animationDelay = (Math.min(i, 8) * 70) + "ms"; });
   }
 
   async function boot() {
@@ -33,45 +33,69 @@
       $("#formMsg").textContent = "Couldn't load the rubric. Serve the site over http (python3 -m http.server).";
       return;
     }
-    const cat = rubric.categories.burger;
     const sc = rubric.scale;
-    const keys = Object.keys(cat.criteria);
-    const MAX = cat.max;
-    $("#sbMax").textContent = MAX;
+    const CAT_EMOJI = { burger: "🍔", sushi: "🍣" };
+    let cat, keys, MAX; // current category state, set by renderCategory()
 
-    // ---- populate static selects/lists
-    const typeSel = $("#f-type");
-    rubric.types.forEach((t) => typeSel.add(new Option(t, t)));
-    const dl = $("#memberList");
-    (rubric.members || []).forEach((m) => dl.appendChild(new Option(m, m)));
+    // ---- category selector
+    const catSel = $("#f-category");
+    Object.keys(rubric.categories).forEach((k) =>
+      catSel.add(new Option(`${CAT_EMOJI[k] || ""} ${rubric.categories[k].label}`.trim(), k)));
+
+    // ---- rater dropdown (members + guest)
+    const raterSel = $("#f-rater");
+    (rubric.members || []).forEach((m) => raterSel.add(new Option(m, m)));
+    raterSel.add(new Option("Other / guest…", "__other"));
+    const raterOther = $("#f-rater-other");
+    raterSel.addEventListener("change", () => {
+      if (raterOther) { raterOther.style.display = raterSel.value === "__other" ? "" : "none"; if (raterSel.value === "__other") raterOther.focus(); }
+    });
+
     const dateEl = $("#f-date");
     const today = new Date();
     dateEl.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-    // ---- build the score groups from the rubric
-    const groupsHost = $("#scoreGroups");
-    groupsHost.innerHTML = cat.groups.map((g) => {
-      const items = g.criteria.map((k) => {
-        const c = cat.criteria[k];
-        const seg = [1, 2, 3, 4].map((v) =>
-          `<input type="radio" name="s-${k}" id="s-${k}-${v}" value="${v}"><label for="s-${k}-${v}" title="${sc.labels[v]}">${v}</label>`
-        ).join("");
-        return `<div class="score-item" data-key="${k}">
-          <div><div class="si-label">${c.label}</div><div class="si-desc">${c.desc}</div></div>
-          <div class="segmented" role="radiogroup" aria-label="${c.label} score, 1 to 4">${seg}</div>
-        </div>`;
-      }).join("");
-      return `<div class="score-group">
-        <div class="sg-head"><h3>${g.label}</h3><span class="sg-blurb">${g.blurb}</span></div>${items}</div>`;
-    }).join("");
-
-    // ---- build scoreboard group mini-bars
-    $("#sbGroups").innerHTML = cat.groups.map((g) =>
-      `<div class="sb-grp" data-g="${g.key}"><span>${g.label.replace(/^The\s+/i, "")}</span>
-        <div class="gmini"><i></i></div><span class="gv">–</span></div>`
-    ).join("");
-
     const form = $("#scoreForm");
+    const groupsHost = $("#scoreGroups");
+    const typeSel = $("#f-type");
+
+    // ---- (re)build the card for a category
+    function renderCategory(key) {
+      cat = rubric.categories[key];
+      keys = Object.keys(cat.criteria);
+      MAX = cat.max;
+      $("#sbMax").textContent = MAX;
+
+      typeSel.innerHTML = "";
+      (cat.types || rubric.types || []).forEach((t) => typeSel.add(new Option(t, t)));
+
+      const weightField = $("#f-weight") ? $("#f-weight").closest(".field") : null;
+      if (weightField) weightField.style.display = key === "burger" ? "" : "none";
+      const burgerLabel = $("#f-burger-label");
+      if (burgerLabel) burgerLabel.textContent = key === "sushi" ? "Item / set" : "Burger / Item";
+
+      groupsHost.innerHTML = cat.groups.map((g) => {
+        const items = g.criteria.map((k) => {
+          const c = cat.criteria[k];
+          const seg = [1, 2, 3, 4].map((v) =>
+            `<input type="radio" name="s-${k}" id="s-${k}-${v}" value="${v}"><label for="s-${k}-${v}" title="${sc.labels[v]}">${v}</label>`
+          ).join("");
+          return `<div class="score-item" data-key="${k}">
+            <div><div class="si-label">${c.label}</div><div class="si-desc">${c.desc}</div></div>
+            <div class="segmented" role="radiogroup" aria-label="${c.label} score, 1 to 4">${seg}</div>
+          </div>`;
+        }).join("");
+        return `<div class="score-group">
+          <div class="sg-head"><h3>${g.label}</h3><span class="sg-blurb">${g.blurb}</span></div>${items}</div>`;
+      }).join("");
+
+      $("#sbGroups").innerHTML = cat.groups.map((g) =>
+        `<div class="sb-grp" data-g="${g.key}"><span>${g.label.replace(/^The\s+/i, "")}</span>
+          <div class="gmini"><i></i></div><span class="gv">–</span></div>`
+      ).join("");
+
+      update();
+    }
 
     function readScores() {
       const scores = {};
@@ -89,7 +113,6 @@
       $("#sbTotal").textContent = total;
       $("#sbBar").style.width = clamp((total / MAX) * 100, 0, 100) + "%";
       $("#sbProgress").textContent = `${got.length} of ${keys.length} scored`;
-      // per-group
       cat.groups.forEach((g) => {
         const vals = g.criteria.map((k) => scores[k]).filter((v) => typeof v === "number");
         const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
@@ -100,7 +123,8 @@
     }
     form.addEventListener("change", update);
     form.addEventListener("input", update);
-    update();
+    catSel.addEventListener("change", () => renderCategory(catSel.value));
+    renderCategory(catSel.value || Object.keys(rubric.categories)[0]);
 
     // ---- build a rating record from the form
     function buildRecord() {
@@ -108,15 +132,18 @@
       const num = (id) => { const v = $(id).value.trim(); return v === "" ? null : Number(v); };
       const radio = (name) => { const el = form.querySelector(`input[name="${name}"]:checked`); return el ? el.value : null; };
       const again = radio("again"), rec = radio("recommend");
+      const category = catSel.value;
+      let rater = raterSel.value;
+      if (rater === "__other") rater = (raterOther ? raterOther.value : "").trim();
       return {
         date: val("#f-date"),
-        rater: val("#f-rater"),
+        rater,
         restaurant: val("#f-restaurant"),
         burger: val("#f-burger"),
-        category: "burger",
+        category,
         price: num("#f-price"),
-        type: $("#f-type").value,
-        pattyWeight: num("#f-weight"),
+        type: typeSel.value,
+        pattyWeight: category === "burger" ? num("#f-weight") : null,
         scores: readScores(),
         again: again === null ? null : again === "yes",
         recommend: rec === null ? null : rec === "yes",
@@ -167,7 +194,7 @@
       }
       const title = `Rating: ${rec.restaurant} — ${rec.burger} (${rec.rater})`;
       const body =
-        `New burger rating from the SBCS scorecard 🍔\n\n` +
+        `New ${rec.category} rating from the SBCS scorecard ${CAT_EMOJI[rec.category] || "🍔"}\n\n` +
         `The club bot will add this to the ledger automatically once this issue has the **rating** label.\n\n` +
         "```json\n" + JSON.stringify(rec, null, 2) + "\n```\n";
       const url = `https://github.com/${CFG.repo}/issues/new?labels=rating&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
@@ -185,7 +212,7 @@
       const total = keys.reduce((a, k) => a + (rec.scores[k] || 0), 0);
       const got = Object.keys(rec.scores).length;
       const head =
-        `🍔 SBCS card — ${rec.restaurant || "?"}: ${rec.burger || "?"}\n` +
+        `${CAT_EMOJI[rec.category] || "🍔"} SBCS card — ${rec.restaurant || "?"}: ${rec.burger || "?"}\n` +
         `${total}/${MAX}  (${got}/${keys.length} scored) · by ${rec.rater || "?"}` +
         `${rec.again != null ? ` · again: ${rec.again ? "yes" : "no"}` : ""}` +
         `${rec.notes ? `\n“${rec.notes}”` : ""}`;

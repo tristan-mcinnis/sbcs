@@ -15,3 +15,5 @@ comment.md
 # Local browser verification artifacts
 .playwright-mcp/
 sbcs-*.png
+v[0-9]*-*.png
+v[0-9]*-*.jpg

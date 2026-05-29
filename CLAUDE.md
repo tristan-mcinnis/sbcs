@@ -42,10 +42,14 @@ scripts/
 
 ## The scoring model (don't reinvent it elsewhere)
 
-- **20 criteria**, each scored an integer **1–4** (`scale` in `rubric.json`).
-  Max total = **80**.
-- The 20 criteria roll up into **6 groups**: Patty, Build, Flavor, Craft, Honesty
-  (value + accuracy), X-Factor. These six are the axes on every scorecard radar.
+- **Two categories**, each its own rubric under `categories` in `rubric.json`:
+  - **burger** — groups: Patty, Build, Flavor, Craft, Honesty, X-Factor.
+  - **sushi** — groups: Rice, Fish, Balance, Craft, Honesty, Experience.
+- Each category has **20 criteria**, each scored an integer **1–4** (`scale`), max **80**.
+  The 6 groups per category are the axes on that item's scorecard radar.
+- Every rating carries a `category`; the ledger, radar, score form and methodology
+  are all category-aware. Adding a third category = add a sibling under `categories`
+  (+ an emoji in `CAT_EMOJI` in app.js/score.js) — nothing else needs touching.
 - **Totals are always recomputed from the 20 sub-scores. The sum is the truth.**
   Any "Total" written by hand is ignored. (The first imported card said 70 but
   sums to 68 — the ledger shows 68.)
@@ -99,8 +103,9 @@ with a helpful comment, and updates-in-place if the same date+rater+burger is re
   page and scorecard regenerate from it; do not hardcode criteria in HTML.
 - **Re-group the radar** → edit `categories.burger.groups` in `rubric.json`. Every
   criterion key must appear in exactly one group (the importer test checks this).
-- **Add a non-burger category later** (sushi, etc.) → add a sibling under
-  `categories`; the data model already carries a `category` field per rating.
+- **Add another category** (beyond burger + sushi) → add a sibling under
+  `categories` and an emoji in `CAT_EMOJI` (app.js + score.js). The ledger,
+  score form, methodology tabs and Hall of Fame pick it up automatically.
 
 ## Conventions & gotchas
 

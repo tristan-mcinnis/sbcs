@@ -35,8 +35,12 @@ radar on every scorecard:
 | **The Honesty** | Value · Accuracy (did it match the menu?) |
 | **The X-Factor** | Post-Burger feeling · that intangible something |
 
+It's the **Sushi** Burger Club, so sushi gets its own 20-criterion rubric too
+(Rice · Fish · Balance · Craft · Honesty · Experience). Pick the plate when you
+score; the ledger, radar and Hall of Fame are category-aware.
+
 **Totals are always recomputed from the sub-scores — the sum is the truth.** Full
-details, including the tie-break rules, live on the [methodology page](https://tristan-mcinnis.github.io/sbcs/methodology.html).
+details for both rubrics, including the tie-break rules, live on the [methodology page](https://tristan-mcinnis.github.io/sbcs/methodology.html).
 
 ## Add a rating
 

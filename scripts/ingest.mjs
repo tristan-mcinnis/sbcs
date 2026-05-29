@@ -18,8 +18,6 @@ const ROOT = join(__dirname, "..");
 const RATINGS = join(ROOT, "data", "ratings.json");
 
 const rubric = JSON.parse(readFileSync(join(ROOT, "data", "rubric.json"), "utf8"));
-const cat = rubric.categories.burger;
-const KEYS = Object.keys(cat.criteria);
 const { min, max } = rubric.scale;
 
 const ISSUE_BODY = process.env.ISSUE_BODY || "";
@@ -68,6 +66,11 @@ if (!ISSUE_BODY.trim()) fail("The issue body was empty.");
 const raw = extractJSON(ISSUE_BODY);
 if (!raw) fail("No valid `json` code block was found in the issue.");
 
+// ---- pick the category's rubric (burger, sushi, …)
+const catKey = rubric.categories[raw.category] ? raw.category : "burger";
+const cat = rubric.categories[catKey];
+const KEYS = Object.keys(cat.criteria);
+
 // ---- validate & normalise
 const problems = [];
 const rec = {
@@ -75,10 +78,10 @@ const rec = {
   rater: String(raw.rater || ISSUE_AUTHOR || "").trim(),
   restaurant: String(raw.restaurant || "").trim(),
   burger: String(raw.burger || "").trim(),
-  category: "burger",
+  category: catKey,
   price: num(raw.price),
   type: String(raw.type || "Other").trim() || "Other",
-  pattyWeight: num(raw.pattyWeight),
+  pattyWeight: catKey === "burger" ? num(raw.pattyWeight) : null,
   scores: {},
   again: toBool(raw.again),
   recommend: toBool(raw.recommend),
@@ -123,8 +126,9 @@ const groupLines = cat.groups.map((g) => {
   return `| ${g.label} | ${avg} / 4 |`;
 }).join("\n");
 
+const catEmoji = { burger: "🍔", sushi: "🍣" }[catKey] || "🍽️";
 comment =
-  `🍔 **Logged to the ledger${isUpdate ? " (updated)" : ""}.**\n\n` +
+  `${catEmoji} **Logged to the ledger${isUpdate ? " (updated)" : ""}.**\n\n` +
   `**${rec.restaurant} — ${rec.burger}** · rated by ${rec.rater} on ${rec.date}\n\n` +
   `### ${total} / ${cat.max}  ·  ${pct}%\n\n` +
   `| Category | Club score |\n| --- | --- |\n${groupLines}\n\n` +

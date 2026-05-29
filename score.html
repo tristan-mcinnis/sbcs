@@ -31,6 +31,7 @@
         <a href="index.html">The Ledger</a>
         <a href="methodology.html">Methodology</a>
         <a href="index.html#charter">Charter</a>
+        <a href="https://www.instagram.com/sushi.burger.club/" target="_blank" rel="noopener">Instagram ↗</a>
         <a href="score.html" class="cta active">Score a Burger</a>
       </div>
     </nav>
@@ -49,16 +50,17 @@
       <!-- the card -->
       <form class="scorecard" id="scoreForm" data-reveal>
         <div class="field-grid">
+          <div class="field"><label for="f-category">Plate</label>
+            <select class="ctl" id="f-category" name="category"></select></div>
           <div class="field"><label for="f-rater">Rater</label>
-            <input class="ctl" id="f-rater" name="rater" list="memberList" placeholder="Your name" autocomplete="off" />
-            <datalist id="memberList"></datalist>
-          </div>
-          <div class="field"><label for="f-date">Date</label>
-            <input class="ctl" id="f-date" name="date" type="date" /></div>
+            <select class="ctl" id="f-rater" name="rater"></select>
+            <input class="ctl" id="f-rater-other" name="raterOther" placeholder="Guest name" autocomplete="off" style="display:none;margin-top:.45rem" /></div>
           <div class="field col-2"><label for="f-restaurant">Restaurant</label>
             <input class="ctl" id="f-restaurant" name="restaurant" placeholder="e.g. Shake Shack" autocomplete="off" /></div>
-          <div class="field col-2"><label for="f-burger">Burger / Item</label>
+          <div class="field col-2"><label for="f-burger" id="f-burger-label">Burger / Item</label>
             <input class="ctl" id="f-burger" name="burger" placeholder="e.g. ShackBurger, double" autocomplete="off" /></div>
+          <div class="field"><label for="f-date">Date</label>
+            <input class="ctl" id="f-date" name="date" type="date" /></div>
           <div class="field"><label for="f-price">Price (¥)</label>
             <input class="ctl" id="f-price" name="price" type="number" min="0" step="1" placeholder="68" /></div>
           <div class="field"><label for="f-type">Type</label>

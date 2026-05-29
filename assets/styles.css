@@ -418,6 +418,17 @@ textarea.ctl { resize: vertical; min-height: 80px; font-family: var(--sans); }
 .share-note { background: var(--card-2); border: 1.5px dashed var(--line); border-radius: var(--radius-sm); padding: .9rem 1.1rem; margin-top: 1.2rem; font-size: .88rem; color: var(--ink-soft); }
 .share-note b { color: var(--ink); }
 
+/* category tabs (methodology) */
+.rtabs { display: inline-flex; gap: .35rem; padding: .35rem; background: var(--card-2); border: 1.5px solid var(--line); border-radius: 999px; margin-bottom: 1.7rem; }
+.rtab { font-family: var(--sans); font-weight: 700; font-size: .9rem; letter-spacing: .01em; padding: .55em 1.2em; border-radius: 999px; color: var(--ink-soft); transition: background .15s, color .15s; }
+.rtab:hover { color: var(--ink); }
+.rtab.active { background: var(--crimson); color: var(--paper); }
+
+/* members roster */
+.roster-wrap { text-align: center; margin-top: 2.6rem; }
+.roster { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+.roster .tag { font-size: .8rem; padding: .5em 1em; }
+
 /* --------------------------------------------------------- responsive ---- */
 @media (max-width: 980px) { .hall { grid-template-columns: repeat(2, 1fr); } .clauses--wide { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 900px) {

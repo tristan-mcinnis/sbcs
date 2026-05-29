@@ -87,6 +87,78 @@
         "accuracy":     { "n": 10, "label": "Accuracy",      "desc": "Did it match the menu's promise? No mystery downgrades." },
         "postBurger":   { "n": 18, "label": "Post-Burger",   "desc": "How you feel afterwards. Satisfied and happy, or full of grease and regret?" },
         "xFactor":      { "n": 20, "label": "X-Factor",      "desc": "The intangible. That special something a scorecard can never fully capture." }
+      },
+      "types": ["Smash", "Pub", "Diner", "Gourmet", "Fast Food", "Chain", "Wagyu", "Plant-Based", "Other"]
+    },
+    "sushi": {
+      "label": "Sushi",
+      "max": 80,
+      "types": ["Nigiri", "Maki", "Sashimi", "Hand Roll", "Omakase", "Chirashi", "Set", "Other"],
+      "groups": [
+        {
+          "key": "rice",
+          "label": "The Rice",
+          "blurb": "The shari — the foundation everything is judged on.",
+          "doctrine": "Sushi is rice. The fish is a guest.",
+          "criteria": ["riceTemp", "riceSeason", "riceTexture", "riceDensity", "riceForm"]
+        },
+        {
+          "key": "fish",
+          "label": "The Fish",
+          "blurb": "The neta — quality, cut and care.",
+          "doctrine": "Freshness is not a feature. It's the price of entry.",
+          "criteria": ["fishFresh", "fishQuality", "knifework", "fishTemp"]
+        },
+        {
+          "key": "balance",
+          "label": "The Balance",
+          "blurb": "How rice, fish and seasoning meet in one bite.",
+          "doctrine": "If you reach for the soy bottle, they've already lost.",
+          "criteria": ["ratio", "wasabi", "nikiri"]
+        },
+        {
+          "key": "craft",
+          "label": "The Craft",
+          "blurb": "Beauty, ideas and a steady hand.",
+          "doctrine": "Ten identical pieces is harder than one perfect one.",
+          "criteria": ["presentation", "originality", "consistency"]
+        },
+        {
+          "key": "honesty",
+          "label": "The Honesty",
+          "blurb": "What it cost and whether it kept its word.",
+          "doctrine": "Omakase is trust. Don't betray it.",
+          "criteria": ["value", "accuracy"]
+        },
+        {
+          "key": "experience",
+          "label": "The Experience",
+          "blurb": "The room, the welcome, the bite you can't forget.",
+          "doctrine": "You'll remember how they made you feel.",
+          "criteria": ["hospitality", "craveability", "xFactor"]
+        }
+      ],
+      "criteria": {
+        "riceTemp":     { "n": 1,  "label": "Rice Temperature",   "desc": "Body-warm shari, never fridge-cold. The quiet tell of a real itamae." },
+        "riceSeason":   { "n": 2,  "label": "Rice Seasoning",     "desc": "The vinegar-salt-sugar balance. Bright and present, never sour or sweet." },
+        "riceTexture":  { "n": 3,  "label": "Rice Texture",       "desc": "Each grain distinct yet tender. Not gluey, not dried out." },
+        "riceDensity":  { "n": 4,  "label": "Rice Density",       "desc": "Loosely packed so it collapses in the mouth, firm enough to lift." },
+        "riceForm":     { "n": 5,  "label": "Rice Form",          "desc": "Shape and size — a neat, intentional bed for the fish." },
+        "fishFresh":    { "n": 6,  "label": "Freshness",          "desc": "Clean, oceanic, alive. No off notes, no fridge funk." },
+        "fishQuality":  { "n": 7,  "label": "Quality",            "desc": "The grade of the cut — colour, sheen and fat where it counts." },
+        "knifework":    { "n": 8,  "label": "Knife Work",         "desc": "The cut and angle of the neta. Clean edges, the right thickness." },
+        "fishTemp":     { "n": 9,  "label": "Fish Temperature",   "desc": "Served at the temperature that flatters it, not straight off the ice." },
+        "ratio":        { "n": 10, "label": "Rice-to-Fish Ratio", "desc": "Neta and shari in proportion. Neither one bullies the other." },
+        "wasabi":       { "n": 11, "label": "Wasabi",             "desc": "Placed between rice and fish with judgment. Heat that lifts, not punishes." },
+        "nikiri":       { "n": 12, "label": "Soy & Glaze",        "desc": "Nikiri or seasoning applied so you never reach for the bottle." },
+        "presentation": { "n": 13, "label": "Presentation",       "desc": "How it's plated or passed across the counter. Beauty is part of the bite." },
+        "originality":  { "n": 14, "label": "Originality",        "desc": "A point of view — a cut, a pairing, a technique you haven't seen." },
+        "consistency":  { "n": 15, "label": "Consistency",        "desc": "Every piece as good as the last. The mark of a steady hand." },
+        "value":        { "n": 16, "label": "Value",              "desc": "Quality for the price. Worth it, or paying for the omakase theatre?" },
+        "accuracy":     { "n": 17, "label": "Accuracy",           "desc": "Did it match what the menu — or the chef — promised?" },
+        "hospitality":  { "n": 18, "label": "Hospitality",        "desc": "Omotenashi. The warmth, timing and care of the service." },
+        "craveability": { "n": 19, "label": "Craveability",       "desc": "Will you dream about that one piece on the way home?" },
+        "xFactor":      { "n": 20, "label": "X-Factor",           "desc": "The intangible — the piece that made the whole table go quiet." }
       }
     }
   },
@@ -122,7 +194,7 @@
     ]
   },
   "awards": [
-    { "key": "goldenBun",     "label": "The Golden Bun",     "emoji": "🥇", "metric": "top",          "desc": "The highest score on the ledger.", "ratifiedPreferred": true },
+    { "key": "goldenPlate",   "label": "The Golden Plate",   "emoji": "🥇", "metric": "top",          "desc": "The highest score on the ledger — burger or sushi.", "ratifiedPreferred": true },
     { "key": "craveCup",      "label": "The Crave Cup",      "emoji": "🔥", "metric": "craveability", "desc": "The one you can't stop thinking about." },
     { "key": "noriPrize",     "label": "The Nori Prize",     "emoji": "🍣", "metric": "originality",  "desc": "The most original idea on a bun." },
     { "key": "woodenSpatula", "label": "The Wooden Spatula", "emoji": "🥄", "metric": "bottom",       "desc": "The cautionary tale. Lowest on record." }
@@ -135,5 +207,5 @@
     { "clause": "The Open Ledger",         "text": "Every score is public, forever. The ledger is the club." },
     { "clause": "No Plate Too Big Or Small", "text": "Smash, pub, wagyu, or drunk-at-3am — all rise to be judged." }
   ],
-  "members": ["Tristan"]
+  "members": ["Tristan", "Pete", "Richard", "Jane", "Theodore", "Rafa", "Kyle"]
 }
