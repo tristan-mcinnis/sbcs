@@ -19,20 +19,22 @@
       <a class="brand" href="index.html" aria-label="Sushi Burger Club Shanghai home">
         <svg class="mark" viewBox="0 0 120 120" aria-hidden="true">
           <g fill="currentColor" font-family="Fraunces, Georgia, serif" font-weight="800" font-size="32" text-anchor="middle">
-            <text x="30" y="40">S</text><text x="90" y="40">B</text><text x="30" y="101">C</text><text x="90" y="101">S</text>
+            <text x="30" y="40">S</text><text x="90" y="40">B</text>
+            <text x="30" y="101">C</text><text x="90" y="101">S</text>
           </g>
           <g stroke="currentColor" stroke-width="4" stroke-linecap="round"><line x1="44" y1="46" x2="76" y2="78"/><line x1="76" y1="46" x2="44" y2="78"/></g>
           <g fill="currentColor"><circle cx="44" cy="46" r="2.8"/><circle cx="76" cy="46" r="2.8"/></g>
         </svg>
-        <span class="brand-text"><b>Sushi Burger Club</b><span>Shanghai · Est 2025</span></span>
+        <span class="brand-text"><b>Sushi Burger Club</b><span data-i18n="brand.sub">Shanghai · Est 2025</span></span>
       </a>
       <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span></button>
       <div class="nav-links" id="navLinks">
-        <a href="index.html">The Ledger</a>
-        <a href="methodology.html" class="active">Methodology</a>
-        <a href="index.html#charter">Charter</a>
+        <a href="index.html" data-i18n="nav.ledger">The Ledger</a>
+        <a href="methodology.html" class="active" data-i18n="nav.methodology">Methodology</a>
+        <a href="index.html#charter" data-i18n="nav.charter">Charter</a>
         <a href="https://www.instagram.com/sushi.burger.club/" target="_blank" rel="noopener">Instagram ↗</a>
-        <a href="score.html" class="cta">Score</a>
+        <button id="langBtn" class="lang-btn">中文</button>
+        <a href="score.html" class="cta" data-i18n="nav.score">Score</a>
       </div>
     </nav>
   </header>
@@ -40,9 +42,9 @@
   <!-- hero -->
   <section class="band method-hero">
     <div class="wrap">
-      <span class="eyebrow" data-reveal>The Dark Arts of Dining</span>
-      <h1 style="font-size:clamp(2.6rem,7vw,5rem);color:var(--crimson);max-width:14ch;margin-top:.6rem" data-reveal>The Methodology</h1>
-      <p class="lead" style="max-width:62ch;margin-top:1rem" data-reveal>
+      <span class="eyebrow" data-reveal data-i18n="meth.eyebrow">The Dark Arts of Dining</span>
+      <h1 style="font-size:clamp(2.6rem,7vw,5rem);color:var(--crimson);max-width:14ch;margin-top:.6rem" data-reveal data-i18n="meth.title">The Methodology</h1>
+      <p class="lead" style="max-width:62ch;margin-top:1rem" data-reveal data-i18n="meth.lead">
         Two rubrics, one club. We score every burger — and every plate of sushi — across
         <strong id="critTotal">20</strong> criteria, each on a four-point scale, for a maximum of
         <strong id="maxTotal">80</strong> points. No secret weighting. No vibes-only verdicts. Here is exactly how
@@ -55,9 +57,9 @@
   <section class="band">
     <div class="wrap">
       <div class="section-head" data-reveal>
-        <div><span class="eyebrow">Step One</span><h2>The Four-Point Scale</h2></div>
+        <div><span class="eyebrow" data-i18n="scale.eyebrow">Step One</span><h2 data-i18n="scale.title">The Four-Point Scale</h2></div>
       </div>
-      <p class="lead" data-reveal style="max-width:62ch">Every criterion gets a whole number from 1 to 4. We keep it tight on purpose — a narrow scale forces a decision and stops everyone defaulting to a polite "7 out of 10."</p>
+      <p class="lead" data-reveal style="max-width:62ch" data-i18n="scale.lead">Every criterion gets a whole number from 1 to 4. We keep it tight on purpose — a narrow scale forces a decision and stops everyone defaulting to a polite "7 out of 10."</p>
       <div class="scale-legend" id="scaleLegend" data-reveal></div>
     </div>
   </section>
@@ -66,8 +68,8 @@
   <section class="band band--paper2">
     <div class="wrap">
       <div class="section-head" data-reveal>
-        <div><span class="eyebrow">Step Two</span><h2>The Twenty Criteria</h2></div>
-        <p class="lead" style="max-width:34ch">Grouped into six families. Each family rolls up into the radar you see on every scorecard.</p>
+        <div><span class="eyebrow" data-i18n="criteria.eyebrow">Step Two</span><h2 data-i18n="criteria.title">The Twenty Criteria</h2></div>
+        <p class="lead" style="max-width:34ch" data-i18n="criteria.lead">Grouped into six families. Each family rolls up into the radar you see on every scorecard.</p>
       </div>
       <div class="rtabs" id="rubricTabs"><!-- category tabs injected --></div>
       <div class="rubric-groups" id="rubricRoot"><!-- injected from rubric.json --></div>
@@ -77,38 +79,38 @@
   <!-- the maths -->
   <section class="band">
     <div class="wrap method-prose" data-reveal>
-      <span class="eyebrow">Step Three</span>
-      <h2 style="font-size:clamp(1.9rem,4vw,2.9rem);margin-top:.4rem">The Maths</h2>
+      <span class="eyebrow" data-i18n="maths.eyebrow">Step Three</span>
+      <h2 style="font-size:clamp(1.9rem,4vw,2.9rem);margin-top:.4rem" data-i18n="maths.title">The Maths</h2>
 
-      <h3>Totals are computed, never trusted</h3>
-      <p>A burger's total is the sum of its 20 sub-scores, full stop. If an old paper card says "70" but the columns add up to 68, the ledger records <strong>68</strong>. The sum is the truth — it keeps everyone honest and makes every score reproducible.</p>
+      <h3 data-i18n="maths.h3.computed">Totals are computed, never trusted</h3>
+      <p data-i18n="maths.body.computed">A burger's total is the sum of its 20 sub-scores, full stop. If an old paper card says "70" but the columns add up to 68, the ledger records <strong>68</strong>. The sum is the truth — it keeps everyone honest and makes every score reproducible.</p>
 
       <div class="callout">
-        <div class="ct">Worked example — the first entry</div>
-        <p style="margin:0">Shake Shack's double ShackBurger scored <code>4·3·4·3·4 / 4·3·3 / 3·4·3·3 / 3·3·4·3 / 3·4 / 3·4</code> across the six families. That sums to <strong>68 / 80</strong> — which is the number on the ledger, regardless of what was scribbled in the "Total" box on the night.</p>
+        <div class="ct" data-i18n="maths.callout.title">Worked example — the first entry</div>
+        <p style="margin:0" data-i18n="maths.callout.body">Shake Shack's double ShackBurger scored <code>4·3·4·3·4 / 4·3·3 / 3·4·3·3 / 3·3·4·3 / 3·4 / 3·4</code> across the six families. That sums to <strong>68 / 80</strong> — which is the number on the ledger, regardless of what was scribbled in the "Total" box on the night.</p>
       </div>
 
-      <h3>When more than one of us scores the same burger</h3>
-      <p>Each criterion is averaged across everyone who rated that exact burger at that restaurant. The radar plots those per-family averages; the headline number is the average of everyone's totals. One person's hot take can't run the table.</p>
+      <h3 data-i18n="maths.h3.multi">When more than one of us scores the same burger</h3>
+      <p data-i18n="maths.body.multi">Each criterion is averaged across everyone who rated that exact burger at that restaurant. The radar plots those per-family averages; the headline number is the average of everyone's totals. One person's hot take can't run the table.</p>
 
-      <h3>How the rankings are ordered</h3>
-      <p>The leaderboard sorts by mean total out of 80. When two burgers tie, we break it in this order:</p>
+      <h3 data-i18n="maths.h3.ranking">How the rankings are ordered</h3>
+      <p data-i18n="maths.body.ranking">The leaderboard sorts by mean total out of 80. When two burgers tie, we break it in this order:</p>
       <ol>
-        <li>Higher average on <strong>The Patty</strong> — the part you cannot fake.</li>
-        <li>Higher average on <strong>Craveability</strong> — would you go back tomorrow?</li>
-        <li>More club ratings on record — consensus beats a single voice.</li>
-        <li>The most recent rating wins, because momentum counts.</li>
+        <li data-i18n="maths.ranking.1">Higher average on <strong>The Patty</strong> — the part you cannot fake.</li>
+        <li data-i18n="maths.ranking.2">Higher average on <strong>Craveability</strong> — would you go back tomorrow?</li>
+        <li data-i18n="maths.ranking.3">More club ratings on record — consensus beats a single voice.</li>
+        <li data-i18n="maths.ranking.4">The most recent rating wins, because momentum counts.</li>
       </ol>
 
-      <h3>The two honest questions</h3>
-      <p>Beyond the 80 points, every card answers two yes/no questions that the score alone can miss:</p>
+      <h3 data-i18n="maths.h3.honest">The two honest questions</h3>
+      <p data-i18n="maths.body.honest">Beyond the 80 points, every card answers two yes/no questions that the score alone can miss:</p>
       <ul class="dash">
-        <li><strong>Order again?</strong> — Would <em>you</em> personally order this exact burger next time?</li>
-        <li><strong>Club recommends?</strong> — Would you send a friend across town for it?</li>
+        <li data-i18n="maths.honest.1"><strong>Order again?</strong> — Would <em>you</em> personally order this exact burger next time?</li>
+        <li data-i18n="maths.honest.2"><strong>Club recommends?</strong> — Would you send a friend across town for it?</li>
       </ul>
 
-      <h3>Governance</h3>
-      <p>The rubric lives in one file — <code>data/rubric.json</code> — and this page is generated from it, so the methodology can never quietly drift from what we actually score. Changing a criterion is a visible edit on the public record. Every rating arrives as its own entry in <code>data/ratings.json</code>; nothing is added in the dark.</p>
+      <h3 data-i18n="maths.h3.governance">Governance</h3>
+      <p data-i18n="maths.body.governance">The rubric lives in one file — <code>data/rubric.json</code> — and this page is generated from it, so the methodology can never quietly drift from what we actually score. Changing a criterion is a visible edit on the public record. Every rating arrives as its own entry in <code>data/ratings.json</code>; nothing is added in the dark.</p>
 
     </div>
   </section>
@@ -117,17 +119,17 @@
   <section class="band band--paper2">
     <div class="wrap">
       <div class="section-head" data-reveal>
-        <div><span class="eyebrow">Step Four</span><h2>Quorum &amp; Consensus</h2></div>
-        <p class="lead" style="max-width:34ch">We average independent cards — but we never average away a good argument.</p>
+        <div><span class="eyebrow" data-i18n="quorum.eyebrow">Step Four</span><h2 data-i18n="quorum.title">Quorum &amp; Consensus</h2></div>
+        <p class="lead" style="max-width:34ch" data-i18n="quorum.lead">We average independent cards — but we never average away a good argument.</p>
       </div>
       <div class="rubric-groups">
         <article class="rubric-card" data-reveal>
-          <div class="rc-head"><h3>Quorum</h3><span class="count">2+ cards = Ratified</span></div>
+          <div class="rc-head"><h3 data-i18n="quorum.card.title">Quorum</h3><span class="count" data-i18n="quorum.card.count">2+ cards = Ratified</span></div>
           <p class="rc-blurb" id="quorumBlurb"></p>
-          <p style="color:var(--ink-soft);font-size:.92rem">On the ledger, a single tasting is badged <strong>Provisional</strong>; two or more becomes <strong>Ratified</strong> — an official Club Verdict. Filter the leaderboard to "Ratified only" to see what the club has actually stood behind.</p>
+          <p style="color:var(--ink-soft);font-size:.92rem" data-i18n="quorum.card.desc">On the ledger, a single tasting is badged <strong>Provisional</strong>; two or more becomes <strong>Ratified</strong> — an official Club Verdict. Filter the leaderboard to "Ratified only" to see what the club has actually stood behind.</p>
         </article>
         <article class="rubric-card" data-reveal>
-          <div class="rc-head"><h3>Consensus</h3></div>
+          <div class="rc-head"><h3 data-i18n="consensus.card.title">Consensus</h3></div>
           <p class="rc-blurb" id="consensusBlurb"></p>
           <div class="bands" id="consensusBands"></div>
         </article>
@@ -139,13 +141,13 @@
   <section class="band">
     <div class="wrap">
       <div class="section-head" data-reveal>
-        <div><span class="eyebrow">The Fine Print</span><h2>The Burger Constitution</h2></div>
-        <p class="lead" style="max-width:34ch">The whole rulebook, fits on a napkin.</p>
+        <div><span class="eyebrow" data-i18n="constitution.eyebrow">The Fine Print</span><h2 data-i18n="constitution.title">The Burger Constitution</h2></div>
+        <p class="lead" style="max-width:34ch" data-i18n="constitution.lead">The whole rulebook, fits on a napkin.</p>
       </div>
       <dl class="clauses clauses--wide" id="constitutionList" data-reveal></dl>
       <div class="chopstick-rule" style="margin-top:2.5rem"><span class="x">S·B✕C·S</span></div>
       <div style="text-align:center;margin-top:2rem">
-        <a href="score.html" class="btn btn--crimson">Score a Burger</a>
+        <a href="score.html" class="btn btn--crimson" data-i18n="constitution.cta">Score a Burger</a>
       </div>
     </div>
   </section>
@@ -161,28 +163,29 @@
           <g fill="currentColor"><circle cx="44" cy="46" r="2.8"/><circle cx="76" cy="46" r="2.8"/></g>
         </svg>
         <h4>Sushi Burger Club Shanghai</h4>
-        <p>A Pro-Carb Collective. We eat with our eyes, our stomachs, and a 20-column spreadsheet. Est 2025.</p>
+        <p data-i18n="footer.tagline">A Pro-Carb Collective. We eat with our eyes, our stomachs, and a 20-column spreadsheet. Est 2025.</p>
       </div>
       <div class="footer-col">
-        <h4>The Club</h4>
+        <h4 data-i18n="footer.club">The Club</h4>
         <ul>
-          <li><a href="index.html#leaderboard">The Ledger</a></li>
-          <li><a href="methodology.html">Methodology</a></li>
-          <li><a href="index.html#charter">Charter</a></li>
-          <li><a href="score.html">Score a Burger</a></li>
+          <li><a href="index.html#leaderboard" data-i18n="nav.ledger">The Ledger</a></li>
+          <li><a href="methodology.html" data-i18n="nav.methodology">Methodology</a></li>
+          <li><a href="index.html#charter" data-i18n="nav.charter">Charter</a></li>
+          <li><a href="score.html" data-i18n="footer.score.link">Score a Burger</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Find Us</h4>
+        <h4 data-i18n="footer.findus">Find Us</h4>
         <ul><li><a href="https://www.instagram.com/sushi.burger.club/" target="_blank" rel="noopener">Instagram ↗</a></li></ul>
       </div>
     </div>
     <div class="wrap footer-bottom">
       <span>© <span id="year">2026</span> Sushi Burger Club Shanghai</span>
-      <span>No plate too big or small.</span>
+      <span data-i18n="footer.copy">No plate too big or small.</span>
     </div>
   </footer>
 
+  <script src="assets/i18n.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>

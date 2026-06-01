@@ -107,6 +107,22 @@ with a helpful comment, and updates-in-place if the same date+rater+burger is re
   `categories` and an emoji in `CAT_EMOJI` (app.js + score.js). The ledger,
   score form, methodology tabs and Hall of Fame pick it up automatically.
 
+## Bilingual (EN / 中文)
+
+The site is fully bilingual. Every user-visible string must have both an English and a
+Chinese translation.
+
+- **Static HTML**: add `data-i18n="key"` to the element; `applyLang()` sets `innerHTML`.
+  For `placeholder` attributes use `data-i18n-placeholder="key"`.
+- **JS-generated HTML**: call `window.t("key")` for every user-visible string.
+- **New translations**: add matching entries to **both** `en` and `zh` blocks in
+  `assets/i18n.js`. Keys use dot-notation (e.g. `nav.ledger`, `js.stats.scored.lbl`).
+- On `langchange` (fired by `setLang()`), `app.js` and `score.js` re-render all
+  dynamic content so JS-generated strings update immediately.
+- Language preference is persisted to `localStorage` under `sbcs-lang`.
+- The lang toggle button (`#langBtn`) lives in the nav of all three HTML pages and
+  is wired up in `i18n.js`. Load order: `i18n.js` → `app.js` / `score.js`.
+
 ## Conventions & gotchas
 
 - **No framework, no build step.** Plain HTML/CSS/JS. Keep it that way unless there's

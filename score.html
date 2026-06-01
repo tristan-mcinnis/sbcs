@@ -19,29 +19,31 @@
       <a class="brand" href="index.html" aria-label="Sushi Burger Club Shanghai home">
         <svg class="mark" viewBox="0 0 120 120" aria-hidden="true">
           <g fill="currentColor" font-family="Fraunces, Georgia, serif" font-weight="800" font-size="32" text-anchor="middle">
-            <text x="30" y="40">S</text><text x="90" y="40">B</text><text x="30" y="101">C</text><text x="90" y="101">S</text>
+            <text x="30" y="40">S</text><text x="90" y="40">B</text>
+            <text x="30" y="101">C</text><text x="90" y="101">S</text>
           </g>
           <g stroke="currentColor" stroke-width="4" stroke-linecap="round"><line x1="44" y1="46" x2="76" y2="78"/><line x1="76" y1="46" x2="44" y2="78"/></g>
           <g fill="currentColor"><circle cx="44" cy="46" r="2.8"/><circle cx="76" cy="46" r="2.8"/></g>
         </svg>
-        <span class="brand-text"><b>Sushi Burger Club</b><span>Shanghai · Est 2025</span></span>
+        <span class="brand-text"><b>Sushi Burger Club</b><span data-i18n="brand.sub">Shanghai · Est 2025</span></span>
       </a>
       <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span></button>
       <div class="nav-links" id="navLinks">
-        <a href="index.html">The Ledger</a>
-        <a href="methodology.html">Methodology</a>
-        <a href="index.html#charter">Charter</a>
+        <a href="index.html" data-i18n="nav.ledger">The Ledger</a>
+        <a href="methodology.html" data-i18n="nav.methodology">Methodology</a>
+        <a href="index.html#charter" data-i18n="nav.charter">Charter</a>
         <a href="https://www.instagram.com/sushi.burger.club/" target="_blank" rel="noopener">Instagram ↗</a>
-        <a href="score.html" class="cta active">Score</a>
+        <button id="langBtn" class="lang-btn">中文</button>
+        <a href="score.html" class="cta active" data-i18n="nav.score">Score</a>
       </div>
     </nav>
   </header>
 
   <section class="band method-hero" style="padding-block:clamp(2rem,4vw,3rem)">
     <div class="wrap">
-      <span class="eyebrow" data-reveal>The Official Scorecard</span>
-      <h1 style="font-size:clamp(2.4rem,6vw,4rem);color:var(--crimson);margin-top:.5rem" data-reveal>Score a Burger</h1>
-      <p class="lead" style="max-width:60ch;margin-top:.8rem" data-reveal>Score first, discuss later. Fill the card across all 20 criteria — the running total updates live. When you're done, log it to the public ledger and the club bot files it for you.</p>
+      <span class="eyebrow" data-reveal data-i18n="score.eyebrow">The Official Scorecard</span>
+      <h1 style="font-size:clamp(2.4rem,6vw,4rem);color:var(--crimson);margin-top:.5rem" data-reveal data-i18n="score.title">Score a Burger</h1>
+      <p class="lead" style="max-width:60ch;margin-top:.8rem" data-reveal data-i18n="score.lead">Score first, discuss later. Fill the card across all 20 criteria — the running total updates live. When you're done, log it to the public ledger and the club bot files it for you.</p>
     </div>
   </section>
 
@@ -50,22 +52,22 @@
       <!-- the card -->
       <form class="scorecard" id="scoreForm" data-reveal>
         <div class="field-grid">
-          <div class="field"><label for="f-category">Plate</label>
+          <div class="field"><label for="f-category" data-i18n="form.plate">Plate</label>
             <select class="ctl" id="f-category" name="category"></select></div>
-          <div class="field"><label for="f-rater">Rater</label>
+          <div class="field"><label for="f-rater" data-i18n="form.rater">Rater</label>
             <select class="ctl" id="f-rater" name="rater"></select>
             <input class="ctl" id="f-rater-other" name="raterOther" placeholder="Guest name" autocomplete="off" style="display:none;margin-top:.45rem" /></div>
-          <div class="field col-2"><label for="f-restaurant">Restaurant</label>
+          <div class="field col-2"><label for="f-restaurant" data-i18n="form.restaurant">Restaurant</label>
             <input class="ctl" id="f-restaurant" name="restaurant" placeholder="e.g. Shake Shack" autocomplete="off" /></div>
-          <div class="field col-2"><label for="f-burger" id="f-burger-label">Burger / Item</label>
+          <div class="field col-2"><label for="f-burger" id="f-burger-label" data-i18n="form.burger.label">Burger / Item</label>
             <input class="ctl" id="f-burger" name="burger" placeholder="e.g. ShackBurger, double" autocomplete="off" /></div>
-          <div class="field"><label for="f-date">Date</label>
+          <div class="field"><label for="f-date" data-i18n="form.date">Date</label>
             <input class="ctl" id="f-date" name="date" type="date" /></div>
-          <div class="field"><label for="f-price">Price (¥)</label>
+          <div class="field"><label for="f-price" data-i18n="form.price">Price (¥)</label>
             <input class="ctl" id="f-price" name="price" type="number" min="0" step="1" placeholder="68" /></div>
-          <div class="field"><label for="f-type">Type</label>
+          <div class="field"><label for="f-type" data-i18n="form.type">Type</label>
             <select class="ctl" id="f-type" name="type"></select></div>
-          <div class="field"><label for="f-weight">Patty Weight (g)</label>
+          <div class="field"><label for="f-weight" data-i18n="form.weight">Patty Weight (g)</label>
             <input class="ctl" id="f-weight" name="weight" type="number" min="0" step="5" placeholder="160" /></div>
         </div>
 
@@ -74,35 +76,35 @@
 
         <!-- verdicts -->
         <div class="score-group">
-          <div class="sg-head"><h3>The Verdict</h3><span class="sg-blurb">two honest questions</span></div>
+          <div class="sg-head"><h3 data-i18n="verdict.title">The Verdict</h3><span class="sg-blurb" data-i18n="verdict.blurb">two honest questions</span></div>
           <div class="score-item">
-            <div><div class="si-label">Order again?</div><div class="si-desc">Would you personally order this exact burger next time?</div></div>
+            <div><div class="si-label" data-i18n="verdict.again">Order again?</div><div class="si-desc" data-i18n="verdict.again.desc">Would you personally order this exact burger next time?</div></div>
             <div class="segmented segmented--wide" role="radiogroup" aria-label="Order again">
-              <input type="radio" name="again" id="again-yes" value="yes"><label for="again-yes">Yes</label>
-              <input type="radio" name="again" id="again-no" value="no"><label for="again-no">No</label>
+              <input type="radio" name="again" id="again-yes" value="yes"><label for="again-yes" data-i18n="verdict.yes">Yes</label>
+              <input type="radio" name="again" id="again-no" value="no"><label for="again-no" data-i18n="verdict.no">No</label>
             </div>
           </div>
           <div class="score-item">
-            <div><div class="si-label">Club recommends?</div><div class="si-desc">Would you send a friend across town for it?</div></div>
+            <div><div class="si-label" data-i18n="verdict.rec">Club recommends?</div><div class="si-desc" data-i18n="verdict.rec.desc">Would you send a friend across town for it?</div></div>
             <div class="segmented segmented--wide" role="radiogroup" aria-label="Club recommends">
-              <input type="radio" name="recommend" id="rec-yes" value="yes"><label for="rec-yes">Yes</label>
-              <input type="radio" name="recommend" id="rec-no" value="no"><label for="rec-no">No</label>
+              <input type="radio" name="recommend" id="rec-yes" value="yes"><label for="rec-yes" data-i18n="verdict.yes">Yes</label>
+              <input type="radio" name="recommend" id="rec-no" value="no"><label for="rec-no" data-i18n="verdict.no">No</label>
             </div>
           </div>
         </div>
 
         <div class="field col-2" style="margin-top:1.6rem">
-          <label for="f-notes">Tasting notes <span style="text-transform:none;letter-spacing:0;color:var(--ink-faint);font-weight:500">(optional)</span></label>
-          <textarea class="ctl" id="f-notes" name="notes" placeholder="The one line you'd tell a friend…"></textarea>
+          <label for="f-notes"><span data-i18n="notes.label">Tasting notes</span> <span style="text-transform:none;letter-spacing:0;color:var(--ink-faint);font-weight:500" data-i18n="notes.optional">(optional)</span></label>
+          <textarea class="ctl" id="f-notes" name="notes" data-i18n-placeholder="notes.placeholder" placeholder="The one line you'd tell a friend…"></textarea>
         </div>
 
         <div class="form-msg" id="formMsg" role="status"></div>
 
         <div class="out-panel" id="outPanel">
-          <div class="chopstick-rule" style="margin:1.2rem 0"><span class="x">YOUR CARD</span></div>
+          <div class="chopstick-rule" style="margin:1.2rem 0"><span class="x" data-i18n="outpanel.title">YOUR CARD</span></div>
           <div class="out-actions">
-            <button type="button" class="btn btn--sm" id="btnCopy">Copy JSON</button>
-            <button type="button" class="btn btn--sm" id="btnDownload">Download .json</button>
+            <button type="button" class="btn btn--sm" id="btnCopy" data-i18n="btn.copy">Copy JSON</button>
+            <button type="button" class="btn btn--sm" id="btnDownload" data-i18n="btn.download">Download .json</button>
           </div>
           <pre id="outJson"></pre>
         </div>
@@ -111,18 +113,18 @@
       <!-- live scoreboard -->
       <aside class="scoreboard" data-reveal>
         <div class="scoreboard-inner">
-          <div class="eyebrow" style="color:#ffd9a0">Running Total</div>
+          <div class="eyebrow" style="color:#ffd9a0" data-i18n="sb.eyebrow">Running Total</div>
           <div class="sb-total"><b id="sbTotal">0</b><span class="sb-of"> / <span id="sbMax">80</span></span></div>
           <div class="sb-bar"><i id="sbBar"></i></div>
           <div class="sb-groups" id="sbGroups"></div>
           <div class="sb-progress" id="sbProgress">0 of 20 scored</div>
           <div class="sb-cta">
-            <button type="button" class="btn btn--crimson" id="btnLog">Log to the Ledger</button>
-            <button type="button" class="btn btn--ghost btn--sm" id="btnShare" style="color:#e7dcc7;border-color:rgba(255,255,255,.3);box-shadow:none">Copy for the group chat</button>
-            <button type="button" class="btn btn--ghost btn--sm" id="btnPreview" style="color:#e7dcc7;border-color:rgba(255,255,255,.3);box-shadow:none">Preview JSON</button>
+            <button type="button" class="btn btn--crimson" id="btnLog" data-i18n="sb.log">Log to the Ledger</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="btnShare" style="color:#e7dcc7;border-color:rgba(255,255,255,.3);box-shadow:none" data-i18n="sb.share">Copy for the group chat</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="btnPreview" style="color:#e7dcc7;border-color:rgba(255,255,255,.3);box-shadow:none" data-i18n="sb.preview">Preview JSON</button>
           </div>
         </div>
-        <p class="share-note">No GitHub account? Tap <b>Copy for the group chat</b>, paste it into the SBCS WeChat, and the scorekeeper drops it into the ledger. Your card still lands on the public record — same as everyone's.</p>
+        <p class="share-note" data-i18n="share.note">No GitHub account? Tap <b>Copy for the group chat</b>, paste it into the SBCS WeChat, and the scorekeeper drops it into the ledger. Your card still lands on the public record — same as everyone's.</p>
       </aside>
     </div>
   </section>
@@ -138,29 +140,30 @@
           <g fill="currentColor"><circle cx="44" cy="46" r="2.8"/><circle cx="76" cy="46" r="2.8"/></g>
         </svg>
         <h4>Sushi Burger Club Shanghai</h4>
-        <p>A Pro-Carb Collective. We eat with our eyes, our stomachs, and a 20-column spreadsheet. Est 2025.</p>
+        <p data-i18n="footer.tagline">A Pro-Carb Collective. We eat with our eyes, our stomachs, and a 20-column spreadsheet. Est 2025.</p>
       </div>
       <div class="footer-col">
-        <h4>The Club</h4>
+        <h4 data-i18n="footer.club">The Club</h4>
         <ul>
-          <li><a href="index.html#leaderboard">The Ledger</a></li>
-          <li><a href="methodology.html">Methodology</a></li>
-          <li><a href="index.html#charter">Charter</a></li>
-          <li><a href="score.html">Score a Burger</a></li>
+          <li><a href="index.html#leaderboard" data-i18n="nav.ledger">The Ledger</a></li>
+          <li><a href="methodology.html" data-i18n="nav.methodology">Methodology</a></li>
+          <li><a href="index.html#charter" data-i18n="nav.charter">Charter</a></li>
+          <li><a href="score.html" data-i18n="footer.score.link">Score a Burger</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Find Us</h4>
+        <h4 data-i18n="footer.findus">Find Us</h4>
         <ul><li><a href="https://www.instagram.com/sushi.burger.club/" target="_blank" rel="noopener">Instagram ↗</a></li></ul>
       </div>
     </div>
     <div class="wrap footer-bottom">
       <span>© <span id="year">2026</span> Sushi Burger Club Shanghai</span>
-      <span>No plate too big or small.</span>
+      <span data-i18n="footer.copy">No plate too big or small.</span>
     </div>
   </footer>
 
   <script src="assets/config.js"></script>
+  <script src="assets/i18n.js"></script>
   <script src="assets/score.js"></script>
 </body>
 </html>

@@ -18,6 +18,7 @@
   };
   const fmt = (n, d = 1) => Number(n).toFixed(d);
   const CAT_EMOJI = { burger: "🍔", sushi: "🍣" };
+  const t = (k) => (typeof window.t === "function" ? window.t(k) : k);
 
   /* ----------------------------------------------------- chrome (all pages) */
   function initChrome() {
@@ -40,8 +41,6 @@
   }
 
   /* ----------------------------------------------------------- aggregation */
-  // Each rated item belongs to a category (burger, sushi, …). Items are grouped
-  // by category + restaurant + name, and scored against that category's rubric.
   function aggregate(ratings, rubric) {
     const byId = new Map();
     for (const r of ratings) {
@@ -109,7 +108,7 @@
     catch (err) {
       listEl.innerHTML = `<div class="empty-state"><div class="big">The ledger can't load over <code>file://</code>.</div>
         <p>Run a local server (e.g. <code>python3 -m http.server</code>) or view the live site. <br/><small>${err.message}</small></p></div>`;
-      return;
+      return null;
     }
     const Q = rubric.quorum || { min: 2, provisionalLabel: "Provisional", ratifiedLabel: "Ratified" };
     const consensusOf = (spread) => {
@@ -122,7 +121,7 @@
     if (catSel) Object.keys(rubric.categories).forEach((k) =>
       catSel.add(new Option(`${CAT_EMOJI[k] || ""} ${rubric.categories[k].label}`.trim(), k)));
     Array.from(new Set(ratings.map((r) => r.type).filter(Boolean))).sort()
-      .forEach((t) => typeSel.add(new Option(t, t)));
+      .forEach((tv) => typeSel.add(new Option(tv, tv)));
     Array.from(new Set(ratings.map((r) => r.rater).filter(Boolean))).sort()
       .forEach((r) => raterSel.add(new Option(r, r)));
 
@@ -208,20 +207,20 @@
       const band = b.ratified ? consensusOf(b.spread) : null;
       const status = b.ratified
         ? `<span class="verdict"><span class="yn yes">✓ ${Q.ratifiedLabel}</span></span>` +
-          (band ? `<span class="verdict">Consensus <span class="yn">${band.label}</span> <span style="color:var(--ink-faint)">· spread ${b.spread}</span></span>` : "")
-        : `<span class="verdict"><span class="yn">${Q.provisionalLabel}</span> <span style="color:var(--ink-faint)">· one card so far, awaiting quorum</span></span>`;
+          (band ? `<span class="verdict">${t("js.consensus")} <span class="yn">${band.label}</span> <span style="color:var(--ink-faint)">· ${t("js.spread")} ${b.spread}</span></span>` : "")
+        : `<span class="verdict"><span class="yn">${Q.provisionalLabel}</span> <span style="color:var(--ink-faint)">· ${t("js.provisionalAwaiting")}</span></span>`;
       const critics = b.count > 1
-        ? `<span class="verdict">Most generous: ${escapeHTML(b.generous.rater)} (${b.generous.total}) · Harshest: ${escapeHTML(b.harsh.rater)} (${b.harsh.total})</span>`
+        ? `<span class="verdict">${t("js.generous")}: ${escapeHTML(b.generous.rater)} (${b.generous.total}) · ${t("js.harsh")}: ${escapeHTML(b.harsh.rater)} (${b.harsh.total})</span>`
         : "";
 
       return `<div class="lb-detail">
-        <div class="detail-radar">${radarSVG(b)}<div class="legend">Club average per category · max 4.0</div></div>
+        <div class="detail-radar">${radarSVG(b)}<div class="legend">${t("js.clubAvgLegend")}</div></div>
         <div class="detail-bars">${groupBlocks}
           <div class="verdicts">
             ${status}
-            <span class="verdict">Order again ${yn(b.again)}</span>
-            <span class="verdict">Club recommends ${yn(b.recommend)}</span>
-            <span class="verdict">Rated by ${escapeHTML(b.raters.join(", "))}</span>
+            <span class="verdict">${t("js.orderAgain")} ${yn(b.again)}</span>
+            <span class="verdict">${t("js.clubRec")} ${yn(b.recommend)}</span>
+            <span class="verdict">${t("js.ratedBy")}: ${escapeHTML(b.raters.join(", "))}</span>
             ${critics}
           </div>
         </div>
@@ -232,23 +231,24 @@
     function render() {
       const burgers = compute();
       if (!burgers.length) {
-        listEl.innerHTML = `<div class="empty-state"><div class="big">No plates match.</div><p>Try clearing the filters.</p></div>`;
+        listEl.innerHTML = `<div class="empty-state"><div class="big">${t("lb.empty")}</div><p>${t("lb.empty.sub")}</p></div>`;
         return;
       }
       listEl.innerHTML = burgers.map((b, i) => {
         const pct = clamp((b.total / b.max) * 100, 0, 100);
+        const ratingLabel = b.count === 1 ? t("js.rating") : t("js.ratings");
         const metaTags = [
           `<span class="tag">${CAT_EMOJI[b.category] || ""} ${escapeHTML(b.categoryLabel)}</span>`,
           `<span class="tag">${escapeHTML(b.type)}</span>`,
           b.price ? `<span class="tag tag--gold">¥${Math.round(b.price)}</span>` : "",
-          `<span class="tag tag--teal">${b.count} rating${b.count > 1 ? "s" : ""}</span>`,
+          `<span class="tag tag--teal">${b.count} ${ratingLabel}</span>`,
           b.ratified ? `<span class="tag tag--solid">✓ ${Q.ratifiedLabel}</span>` : `<span class="tag">${Q.provisionalLabel}</span>`,
         ].join("");
         const row = `<div class="lb-row" role="button" tabindex="0" data-id="${b.id}" aria-expanded="false">
           <div class="lb-rank${i === 0 ? " is-top" : ""}">${i + 1}</div>
           <div class="lb-main">
             <div class="name">${escapeHTML(b.burger)}</div>
-            <div class="sub">${escapeHTML(b.restaurant)}${b.category === "burger" && b.weight ? " · " + b.weight + "g patty" : ""}</div>
+            <div class="sub">${escapeHTML(b.restaurant)}${b.category === "burger" && b.weight ? " · " + b.weight + t("js.patty") : ""}</div>
             <div class="meta">${metaTags}</div>
           </div>
           <div class="lb-score">
@@ -265,7 +265,7 @@
         const toggle = () => {
           openId = openId === el.dataset.id ? null : el.dataset.id;
           render();
-          if (openId) { const t = $(`.lb-row[data-id="${openId}"]`, listEl); if (t) t.setAttribute("aria-expanded", "true"); }
+          if (openId) { const tgt = $(`.lb-row[data-id="${openId}"]`, listEl); if (tgt) tgt.setAttribute("aria-expanded", "true"); }
         };
         el.addEventListener("click", toggle);
         el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
@@ -277,6 +277,10 @@
     render();
     renderStats(ratings, rubric);
     renderHall(ratings, rubric);
+
+    return {
+      refresh() { render(); renderStats(ratings, rubric); renderHall(ratings, rubric); }
+    };
   }
 
   function renderHall(ratings, rubric) {
@@ -305,8 +309,8 @@
       const body = w
         ? `<div class="honour-burger">${CAT_EMOJI[w.b.category] || ""} ${escapeHTML(w.b.burger)}</div>
            <div class="honour-where">${escapeHTML(w.b.restaurant)}</div>
-           <div class="honour-val">${w.val}${w.prov ? ' <span class="prov">prov.</span>' : ""}</div>`
-        : `<div class="honour-burger" style="color:var(--ink-faint)">Awaiting cards</div>`;
+           <div class="honour-val">${w.val}${w.prov ? ` <span class="prov">${t("js.prov")}</span>` : ""}</div>`
+        : `<div class="honour-burger" style="color:var(--ink-faint)">${t("hall.awaiting")}</div>`;
       return `<article class="honour" data-reveal>
         <div class="honour-emoji" aria-hidden="true">${a.emoji || "🏅"}</div>
         <div class="honour-name">${a.label}</div>
@@ -314,7 +318,6 @@
     }).join("");
   }
 
-  // shared across index + methodology: render constitution / quorum / consensus copy
   function renderRubricDocs(rubric) {
     const cn = $("#constitutionList");
     if (cn && rubric.constitution) {
@@ -335,7 +338,7 @@
         const isLast = b.maxSpread >= 999;
         const range = isLast ? `${lo}+` : lo === b.maxSpread ? `${lo}` : `${lo}–${b.maxSpread}`;
         prev = b.maxSpread;
-        return `<div class="band-cell"><div class="bl">${b.label}</div><div class="bn">spread ${range}</div><div class="bnote">${b.note}</div></div>`;
+        return `<div class="band-cell"><div class="bl">${b.label}</div><div class="bn">${t("js.spread")} ${range}</div><div class="bnote">${b.note}</div></div>`;
       }).join("");
     }
   }
@@ -346,21 +349,20 @@
     const top = burgers[0];
     const restaurants = new Set(ratings.map((r) => r.restaurant)).size;
     const cards = [
-      { num: ratings.length, lbl: "Scores Logged", sub: "and counting" },
-      { num: burgers.length, lbl: "Plates Judged", sub: "burgers & sushi" },
-      { num: restaurants, lbl: "Kitchens Visited", sub: "no plate too small" },
-      { num: top ? fmt(top.total) : "—", lbl: "Top Score", sub: top ? top.burger : "—", raw: true },
+      { num: ratings.length, lbl: t("js.stats.scored.lbl"), sub: t("js.stats.scored.sub") },
+      { num: burgers.length, lbl: t("js.stats.plates.lbl"), sub: t("js.stats.plates.sub") },
+      { num: restaurants, lbl: t("js.stats.kitchens.lbl"), sub: t("js.stats.kitchens.sub") },
+      { num: top ? fmt(top.total) : "—", lbl: t("js.stats.top.lbl"), sub: top ? top.burger : "—", raw: true },
     ];
     el.innerHTML = cards.map((c) =>
       `<div class="stat"><span class="num" data-count="${c.raw ? "" : c.num}">${c.num}</span>
         <span class="lbl">${c.lbl}</span><span class="sub">${escapeHTML(String(c.sub))}</span></div>`
     ).join("");
-    // count-up
     $$(".stat .num[data-count]", el).forEach((n) => {
       const target = Number(n.dataset.count); if (!target || target < 2) return;
       let cur = 0; const step = Math.max(1, Math.round(target / 24));
       n.textContent = "0";
-      const t = setInterval(() => { cur = Math.min(target, cur + step); n.textContent = String(cur); if (cur >= target) clearInterval(t); }, 28);
+      const tv = setInterval(() => { cur = Math.min(target, cur + step); n.textContent = String(cur); if (cur >= target) clearInterval(tv); }, 28);
     });
   }
 
@@ -390,11 +392,11 @@
         return `<article class="rubric-card" data-reveal>
           <div class="rc-head"><h3>${g.label}</h3><span class="count">${g.criteria.length} criteria · ${g.criteria.length * sc.max} pts</span></div>
           <p class="rc-blurb">${g.blurb}</p>
-          ${g.doctrine ? `<p class="doctrine">“${g.doctrine}”</p>` : ""}
+          ${g.doctrine ? `<p class="doctrine">"${g.doctrine}"</p>` : ""}
           <dl>${dl}</dl></article>`;
       }).join("");
       const tot = $("#critTotal"); if (tot) tot.textContent = Object.keys(cat.criteria).length;
-      const max = $("#maxTotal"); if (max) max.textContent = cat.max;
+      const mx = $("#maxTotal"); if (mx) mx.textContent = cat.max;
       if (tabsHost) $$(".rtab", tabsHost).forEach((btn) => btn.classList.toggle("active", btn.dataset.cat === key));
     }
 
@@ -421,7 +423,14 @@
       return;
     }
     renderRubricDocs(rubric);
-    if ($("#lbList")) await initLedger(rubric);
+    let ledgerCtrl = null;
+    if ($("#lbList")) ledgerCtrl = await initLedger(rubric);
     if ($("#rubricRoot")) initMethodology(rubric);
+
+    window.addEventListener("langchange", () => {
+      renderRubricDocs(rubric);
+      if (ledgerCtrl) ledgerCtrl.refresh();
+      if ($("#rubricRoot")) initMethodology(rubric);
+    });
   });
 })();

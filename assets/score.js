@@ -11,12 +11,13 @@
   const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
   const slug = (s) => String(s || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const CFG = window.SBCS_CONFIG || { repo: "" };
+  const t = (k) => (typeof window.t === "function" ? window.t(k) : k);
 
   function chrome() {
     const y = $("#year"); if (y) y.textContent = String(new Date().getFullYear());
-    const t = $(".nav-toggle"), l = $("#navLinks");
-    if (t && l) {
-      t.addEventListener("click", () => { const o = l.classList.toggle("open"); t.setAttribute("aria-expanded", String(o)); });
+    const tv = $(".nav-toggle"), l = $("#navLinks");
+    if (tv && l) {
+      tv.addEventListener("click", () => { const o = l.classList.toggle("open"); tv.setAttribute("aria-expanded", String(o)); });
       $$("#navLinks a").forEach((a) => a.addEventListener("click", () => l.classList.remove("open")));
     }
     $$("[data-reveal]").forEach((el, i) => { el.style.animationDelay = (Math.min(i, 8) * 70) + "ms"; });
@@ -35,7 +36,7 @@
     }
     const sc = rubric.scale;
     const CAT_EMOJI = { burger: "🍔", sushi: "🍣" };
-    let cat, keys, MAX; // current category state, set by renderCategory()
+    let cat, keys, MAX;
 
     // ---- category selector
     const catSel = $("#f-category");
@@ -67,12 +68,12 @@
       $("#sbMax").textContent = MAX;
 
       typeSel.innerHTML = "";
-      (cat.types || rubric.types || []).forEach((t) => typeSel.add(new Option(t, t)));
+      (cat.types || rubric.types || []).forEach((tv) => typeSel.add(new Option(tv, tv)));
 
       const weightField = $("#f-weight") ? $("#f-weight").closest(".field") : null;
       if (weightField) weightField.style.display = key === "burger" ? "" : "none";
       const burgerLabel = $("#f-burger-label");
-      if (burgerLabel) burgerLabel.textContent = key === "sushi" ? "Item / set" : "Burger / Item";
+      if (burgerLabel) burgerLabel.textContent = key === "sushi" ? t("form.sushi.label") : t("form.burger.label");
 
       groupsHost.innerHTML = cat.groups.map((g) => {
         const items = g.criteria.map((k) => {
@@ -112,7 +113,10 @@
       const total = got.reduce((a, k) => a + scores[k], 0);
       $("#sbTotal").textContent = total;
       $("#sbBar").style.width = clamp((total / MAX) * 100, 0, 100) + "%";
-      $("#sbProgress").textContent = `${got.length} of ${keys.length} scored`;
+      const lang = window.SBCS_LANG || "en";
+      $("#sbProgress").textContent = lang === "zh"
+        ? `已评 ${got.length}/${keys.length} 项`
+        : `${got.length} of ${keys.length} scored`;
       cat.groups.forEach((g) => {
         const vals = g.criteria.map((k) => scores[k]).filter((v) => typeof v === "number");
         const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
@@ -125,6 +129,11 @@
     form.addEventListener("input", update);
     catSel.addEventListener("change", () => renderCategory(catSel.value));
     renderCategory(catSel.value || Object.keys(rubric.categories)[0]);
+
+    // re-render on language change
+    window.addEventListener("langchange", () => {
+      renderCategory(catSel.value || Object.keys(rubric.categories)[0]);
+    });
 
     // ---- build a rating record from the form
     function buildRecord() {
@@ -215,7 +224,7 @@
         `${CAT_EMOJI[rec.category] || "🍔"} SBCS card — ${rec.restaurant || "?"}: ${rec.burger || "?"}\n` +
         `${total}/${MAX}  (${got}/${keys.length} scored) · by ${rec.rater || "?"}` +
         `${rec.again != null ? ` · again: ${rec.again ? "yes" : "no"}` : ""}` +
-        `${rec.notes ? `\n“${rec.notes}”` : ""}`;
+        `${rec.notes ? `\n"${rec.notes}"` : ""}`;
       return head + "\n\n```json\n" + JSON.stringify(rec, null, 2) + "\n```";
     }
 
